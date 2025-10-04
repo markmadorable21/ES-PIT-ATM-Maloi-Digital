@@ -1,19 +1,19 @@
-import { useState, useEffect } from "react";
-import backGroundImage from "../assets/background imge.png";
-import masterCard from "../assets/mastercard.png";
-import visaCard from "../assets/visa.png";
-import gCash from "../assets/gcash.png";
-import atmIcon from "../assets/atm.png";
+import { useState, useEffect } from 'react';
+import backGroundImage from '../assets/images/background imge.png';
+import masterCard from '../assets/images/mastercard.png';
+import visaCard from '../assets/images/visa.png';
+import gCash from '../assets/images/gcash.png';
+import atmIcon from '../assets/images/atm.png';
 
 function LandingPage() {
-  const [time, setTime] = useState(" ");
+  const [time, setTime] = useState(' ');
 
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
       const formatted = now.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
+        hour: '2-digit',
+        minute: '2-digit',
         hour12: true,
       });
       setTime(formatted);
@@ -29,15 +29,15 @@ function LandingPage() {
       className="flex items-center justify-center min-h-screen bg-white relative"
       style={{
         backgroundImage: `url(${backGroundImage})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center 20px",
-        backgroundRepeat: "no-repeat",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center 20px',
+        backgroundRepeat: 'no-repeat',
       }}
     >
       {/* Top Navigation */}
       <nav className="absolute top-0 left-0 w-full px-2 sm:px-4 py-2 sm:py-3 flex flex-col md:flex-row md:items-center md:justify-between bg-[#CD2255] text-white text-xs sm:text-sm z-10 gap-2 sm:gap-3">
         {/* Time */}
-        <div className="text-center md:text-left">{time}</div>
+        <div className="text-center md:text-left font-[Kameron]">{time}</div>
 
         {/* Payment Icons */}
         <div className="flex items-center justify-center gap-3 sm:gap-4 flex-wrap">
@@ -47,7 +47,7 @@ function LandingPage() {
         </div>
 
         {/* Contact */}
-        <div className="text-center md:text-right text-[10px] sm:text-xs md:text-sm leading-tight">
+        <div className="text-center md:text-right text-[10px] sm:text-xs md:text-sm leading-tight font-[Kameron]">
           For inquiries, please contact <br className="block md:hidden" />
           <span className="font-medium">+63 905 724 6967</span>
         </div>
