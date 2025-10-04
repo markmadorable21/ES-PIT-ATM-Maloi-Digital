@@ -58,7 +58,7 @@ function ChooseTransactionPage() {
       {/* Page Content */}
       <div className="absolute inset-0 flex flex-col  justify-center  px-4">
         {/* Title */}
-        <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 flex   gap-2 font-[Kameron]">
+        <h1 className="text-3xl sm:text-5xl font-bold text-gray-900 flex   gap-2 font-[Kameron]">
           <img src={atmIcon} alt="ATM Icon" className="h-8 sm:h-9 w-auto" />
           Maloi Digital
         </h1>
