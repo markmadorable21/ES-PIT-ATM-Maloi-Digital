@@ -56,9 +56,9 @@ function ChooseTransactionPage() {
       </nav>
 
       {/* Page Content */}
-      <div className="absolute inset-0 flex flex-col  justify-center text-center px-4">
+      <div className="absolute inset-0 flex flex-col  justify-center  px-4">
         {/* Title */}
-        <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 flex items-center justify-center gap-2 font-[Kameron]">
+        <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 flex   gap-2 font-[Kameron]">
           <img src={atmIcon} alt="ATM Icon" className="h-8 sm:h-9 w-auto" />
           Maloi Digital
         </h1>
@@ -73,16 +73,16 @@ function ChooseTransactionPage() {
         </h2>
 
         {/* Transaction Buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-5 mt-5">
-          <button className="bg-[#CD2255] text-white font-semibold py-3 px-10 sm:px-12 rounded-xl shadow-md hover:bg-[#b81e4b] transition-all duration-200 text-sm sm:text-base  font-[Kameron]">
+        <div className="flex flex-col sm:flex-row  gap-5 mt-5">
+          <button className="bg-[#CD2255] text-white font-semibold py-15 px-10 sm:px-5 rounded-xl shadow-md hover:bg-[#b81e4b] transition-all duration-200 text-sm sm:text-base  font-[Kameron]">
             Balance Inquiry
           </button>
 
-          <button className="bg-[#CD2255] text-white font-semibold py-3 px-10 sm:px-12 rounded-xl shadow-md hover:bg-[#b81e4b] transition-all duration-200 text-sm sm:text-base  font-[Kameron]">
+          <button className="bg-[#CD2255] text-white font-semibold py-15 px-10 sm:px-5 rounded-xl shadow-md hover:bg-[#b81e4b] transition-all duration-200 text-sm sm:text-base  font-[Kameron]">
             Withdraw Cash
           </button>
 
-          <button className="bg-[#CD2255] text-white font-semibold py-3 px-10 sm:px-12 rounded-xl shadow-md hover:bg-[#b81e4b] transition-all duration-200 text-sm sm:text-base font-[Kameron]">
+          <button className="bg-[#CD2255] text-white font-semibold py-15 px-10 sm:px-5 rounded-xl shadow-md hover:bg-[#b81e4b] transition-all duration-200 text-sm sm:text-base font-[Kameron]">
             Change PIN
           </button>
         </div>
