@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
-import backGroundImage from "../assets/background imge.png";
+import WithdrawalAmount from "../components/withdrawalAmount";
+import BalanceInquiry from "../components/balanceInquiry";
+import backGroundImage from "../assets/atm-background-image.png";
 import masterCard from "../assets/mastercard.png";
 import visaCard from "../assets/visa.png";
 import gCash from "../assets/gcash.png";
@@ -7,6 +9,10 @@ import atmIcon from "../assets/atm.png";
 
 function ChooseTransactionPage() {
   const [time, setTime] = useState("");
+  const [selectedTransaction, setSelectedTransaction] = useState(null);
+  const [selectedAccount, setSelectedAccount] = useState(null);
+  const [amount, setAmount] = useState(0);
+  const [bankFee, setBankFee] = useState(0);
 
   useEffect(() => {
     const updateTime = () => {
@@ -23,32 +29,43 @@ function ChooseTransactionPage() {
     return () => clearInterval(timer);
   }, []);
 
+  const handleButtonClick = (transactionType) => {
+    setSelectedTransaction(transactionType);
+    setSelectedAccount(null);
+    setAmount(0);
+  };
+
+  const handleBackClick = () => {
+    setSelectedTransaction(null); // Reset the selected transaction
+    setSelectedAccount(null); // Reset the selected account
+    setAmount(0); // Reset the amount
+    setBankFee(0); // Reset the bank fee
+  };
+
+  const handleAccountSelection = (accountType) => {
+    setSelectedAccount(accountType);
+  };
+
   return (
     <div
       className="flex items-center justify-center min-h-screen bg-white relative"
       style={{
-        backgroundImage: `
-    linear-gradient(to right, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.7) 40%, rgba(255,255,255,0) 100%),
-    url(${backGroundImage})
-  `,
+        backgroundImage: `linear-gradient(to right, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.7) 40%, rgba(255,255,255,0) 100%), url(${backGroundImage})`,
         backgroundSize: "cover",
-        backgroundPosition: "center 20px",
+        backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
+        minHeight: "100vh",
+        width: "100vw",
       }}
     >
       {/* Top Navigation */}
       <nav className="absolute top-0 left-0 w-full px-2 sm:px-4 py-2 sm:py-3 flex flex-col md:flex-row md:items-center md:justify-between bg-[#CD2255] text-white text-xs sm:text-sm z-10 gap-2 sm:gap-3 font-[Kameron]">
-        {/* Time */}
         <div className="text-center md:text-left">{time}</div>
-
-        {/* Payment Icons */}
         <div className="flex items-center justify-center gap-3 sm:gap-4 flex-wrap">
           <img src={masterCard} alt="MasterCard" className="h-5 sm:h-7" />
           <img src={visaCard} alt="Visa" className="h-5 sm:h-7" />
           <img src={gCash} alt="GCash" className="h-5 sm:h-7" />
         </div>
-
-        {/* Contact Info */}
         <div className="text-center md:text-right text-[10px] sm:text-xs md:text-sm leading-tight">
           For inquiries, please contact <br className="block md:hidden" />
           <span className="font-medium">+63 905 724 6967</span>
@@ -56,36 +73,116 @@ function ChooseTransactionPage() {
       </nav>
 
       {/* Page Content */}
-      <div className="absolute inset-0 flex flex-col  justify-center  px-4">
-        {/* Title */}
-        <h1 className="text-3xl sm:text-5xl font-bold text-gray-900 flex   gap-2 font-[Kameron]">
+      <div className="absolute inset-0 flex flex-col justify-center px-4">
+        <h1 className="text-3xl sm:text-5xl font-bold text-gray-900 flex gap-2 font-[Kameron]">
           <img src={atmIcon} alt="ATM Icon" className="h-8 sm:h-9 w-auto" />
           Maloi Digital
         </h1>
-
         <p className="italic text-gray-600 text-sm sm:text-base font-[Lavishly_Yours]">
           All your finances, one place.
         </p>
 
-        {/* Subtitle */}
         <h2 className="text-base sm:text-lg md:text-xl font-semibold text-gray-800 mt-3 font-[Kameron]">
-          Please choose your desired transaction
+          {!selectedTransaction
+            ? "Please choose your desired transaction"
+            : selectedTransaction === "withdrawCash" && !selectedAccount
+            ? "Please choose your desired account for withdrawal"
+            : selectedTransaction === "balanceInquiry" && !selectedAccount
+            ? "Please choose your desired account for balance inquiry"
+            : selectedTransaction === "withdrawCash" && selectedAccount
+            ? "Please enter the withdrawal amount"
+            : selectedTransaction === "balanceInquiry" && selectedAccount
+            ? "Checking balance for selected account..."
+            : ""}
         </h2>
 
-        {/* Transaction Buttons */}
-        <div className="flex flex-col sm:flex-row  gap-5 mt-5">
-          <button className="bg-[#CD2255] text-white font-semibold py-15 px-10 sm:px-5 rounded-xl shadow-md hover:bg-[#b81e4b] transition-all duration-200 text-sm sm:text-base  font-[Kameron]">
-            Balance Inquiry
-          </button>
-
-          <button className="bg-[#CD2255] text-white font-semibold py-15 px-10 sm:px-5 rounded-xl shadow-md hover:bg-[#b81e4b] transition-all duration-200 text-sm sm:text-base  font-[Kameron]">
-            Withdraw Cash
-          </button>
-
-          <button className="bg-[#CD2255] text-white font-semibold py-15 px-10 sm:px-5 rounded-xl shadow-md hover:bg-[#b81e4b] transition-all duration-200 text-sm sm:text-base font-[Kameron]">
-            Change PIN
-          </button>
-        </div>
+        {/* Main Transaction or Account Selection */}
+        {!selectedTransaction ? (
+          <div className="flex flex-col sm:flex-row gap-5 mt-5">
+            <button
+              className="px-6 py-3 bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition"
+              onClick={() => handleButtonClick("balanceInquiry")}
+              type="button"
+            >
+              Balance Inquiry
+            </button>
+            <button
+              className="px-6 py-3 bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition"
+              onClick={() => handleButtonClick("withdrawCash")}
+              type="button"
+            >
+              Withdraw Cash
+            </button>
+            <button
+              className="px-6 py-3 bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition"
+              onClick={() => handleButtonClick("changePin")}
+              type="button"
+            >
+              Change PIN
+            </button>
+          </div>
+        ) : selectedTransaction === "balanceInquiry" && !selectedAccount ? (
+          <div className="flex flex-col sm:flex-row gap-5 mt-5">
+            <button
+              className="px-6 py-3 bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition"
+              onClick={() => handleAccountSelection("Savings")}
+              type="button"
+            >
+              Savings
+            </button>
+            <button
+              className="px-6 py-3 bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition"
+              onClick={() => handleAccountSelection("Credit Card")}
+              type="button"
+            >
+              Credit Card
+            </button>
+            <button
+              onClick={handleBackClick}
+              className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-semibold text-lg shadow transition"
+              type="button"
+            >
+              Back
+            </button>
+          </div>
+        ) : selectedTransaction === "withdrawCash" && !selectedAccount ? (
+          <div className="flex flex-col sm:flex-row gap-5 mt-5">
+            <button
+              className="px-6 py-3 bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition"
+              onClick={() => handleAccountSelection("Savings")}
+              type="button"
+            >
+              Savings
+            </button>
+            <button
+              className="px-6 py-3 bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition"
+              onClick={() => handleAccountSelection("Credit Card")}
+              type="button"
+            >
+              Credit Card
+            </button>
+            <button
+              onClick={handleBackClick}
+              className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-semibold text-lg shadow transition"
+              type="button"
+            >
+              Back
+            </button>
+          </div>
+        ) : selectedTransaction === "withdrawCash" && selectedAccount ? (
+          <WithdrawalAmount
+            amount={amount}
+            setAmount={setAmount}
+            bankFee={bankFee}
+            setBankFee={setBankFee}
+            onCancel={handleBackClick} // Pass the onCancel prop to go back to the selection screen
+          />
+        ) : selectedTransaction === "balanceInquiry" && selectedAccount ? (
+          <BalanceInquiry
+            selectedAccount={selectedAccount}
+            onBack={handleBackClick}
+          />
+        ) : null}
       </div>
     </div>
   );

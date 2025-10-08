@@ -104,16 +104,7 @@ function LandingPage() {
       </nav>
 
       {/* Right / Upper text content */}
-      <div
-        className="
-          absolute inset-y-5 right-5
-          w-[44%] min-w-[300px]
-          flex items-start justify-end
-          pt-2 sm:pt-28 md:pt-32
-          pr-4 sm:pr-8 md:pr-16 lg:pr-24
-          text-left m-2
-        "
-      >
+      <div className="absolute inset-y-5 right-5 w-[44%] min-w-[300px] flex items-start justify-end pt-2 sm:pt-28 md:pt-32 pr-4 sm:pr-8 md:pr-16 lg:pr-24 text-left m-2">
         <div className="max-w-full h-auto flex flex-col items-start p-4">
           {/* Title row */}
           <div className="flex flex-nowrap items-baseline gap-3">
@@ -161,7 +152,7 @@ function LandingPage() {
               </p>
 
               {/* PIN boxes */}
-              <div className="mt-4 flex gap-6">
+              <div className="mt-4 flex gap-4 justify-center">
                 {pin.map((digit, i) => (
                   <input
                     key={i}
@@ -180,17 +171,19 @@ function LandingPage() {
               </div>
 
               {/* Enter button */}
-              <button
-                onClick={handleSubmitPin}
-                disabled={!isPinReady}
-                className={`mt-7 w-56 rounded-full px-6 py-3 text-lg font-semibold text-white shadow-lg ${
-                  isPinReady
-                    ? "bg-[#CD2255] hover:brightness-110"
-                    : "bg-[#CD2255]/60 cursor-not-allowed"
-                }`}
-              >
-                Enter
-              </button>
+              <div className="mt-6 flex justify-center">
+                <button
+                  onClick={handleSubmitPin}
+                  disabled={!isPinReady}
+                  className={`w-56 rounded-full px-6 py-3 text-lg font-semibold text-white shadow-lg ${
+                    isPinReady
+                      ? "bg-[#CD2255] hover:brightness-110"
+                      : "bg-[#CD2255]/60 cursor-not-allowed"
+                  }`}
+                >
+                  Enter
+                </button>
+              </div>
             </div>
           )}
 
