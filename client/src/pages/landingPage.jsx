@@ -104,7 +104,7 @@ function LandingPage() {
       </nav>
 
       {/* Right / Upper text content */}
-      <div className="absolute inset-y-5 right-5 w-[44%] min-w-[300px] flex items-start justify-end pt-2 sm:pt-28 md:pt-32 pr-4 sm:pr-8 md:pr-16 lg:pr-24 text-left m-2">
+      <div className="absolute inset-y-5 right-5 w-[44%] min-w-[300px] flex items-start justify-end pt-2 sm:pt-28 md:pt-32 pr-4 sm:pr-8 md:pr-16 lg:pr-24 text-left m-2 mx-10">
         <div className="max-w-full h-auto flex flex-col items-start p-4">
           {/* Title row */}
           <div className="flex flex-nowrap items-baseline gap-3">

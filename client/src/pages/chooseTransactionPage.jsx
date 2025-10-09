@@ -78,7 +78,7 @@ function ChooseTransactionPage() {
           <img src={atmIcon} alt="ATM Icon" className="h-8 sm:h-9 w-auto" />
           Maloi Digital
         </h1>
-        <p className="italic text-gray-600 text-sm sm:text-base font-[Lavishly_Yours]">
+        <p className="text-black text-2xl sm:text-3xl mt-2 font-[Lavishly_Yours]">
           All your finances, one place.
         </p>
 
@@ -100,21 +100,21 @@ function ChooseTransactionPage() {
         {!selectedTransaction ? (
           <div className="flex flex-col sm:flex-row gap-5 mt-5">
             <button
-              className="px-6 py-3 bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition"
+              className="px-6 py-3 bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition font-[Kameron]"
               onClick={() => handleButtonClick("balanceInquiry")}
               type="button"
             >
               Balance Inquiry
             </button>
             <button
-              className="px-6 py-3 bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition"
+              className="px-6 py-3 bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition font-[Kameron]"
               onClick={() => handleButtonClick("withdrawCash")}
               type="button"
             >
               Withdraw Cash
             </button>
             <button
-              className="px-6 py-3 bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition"
+              className="px-6 py-3 bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition font-[Kameron]"
               onClick={() => handleButtonClick("changePin")}
               type="button"
             >
@@ -124,14 +124,14 @@ function ChooseTransactionPage() {
         ) : selectedTransaction === "balanceInquiry" && !selectedAccount ? (
           <div className="flex flex-col sm:flex-row gap-5 mt-5">
             <button
-              className="px-6 py-3 bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition"
+              className="px-6 py-3 bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition font-[Kameron]"
               onClick={() => handleAccountSelection("Savings")}
               type="button"
             >
               Savings
             </button>
             <button
-              className="px-6 py-3 bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition"
+              className="px-6 py-3 bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition font-[Kameron]"
               onClick={() => handleAccountSelection("Credit Card")}
               type="button"
             >
@@ -139,7 +139,7 @@ function ChooseTransactionPage() {
             </button>
             <button
               onClick={handleBackClick}
-              className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-semibold text-lg shadow transition"
+              className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-semibold text-lg shadow transition font-[Kameron]"
               type="button"
             >
               Back
@@ -148,14 +148,14 @@ function ChooseTransactionPage() {
         ) : selectedTransaction === "withdrawCash" && !selectedAccount ? (
           <div className="flex flex-col sm:flex-row gap-5 mt-5">
             <button
-              className="px-6 py-3 bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition"
+              className="px-6 py-3 bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition font-[Kameron]"
               onClick={() => handleAccountSelection("Savings")}
               type="button"
             >
               Savings
             </button>
             <button
-              className="px-6 py-3 bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition"
+              className="px-6 py-3 bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition font-[Kameron]"
               onClick={() => handleAccountSelection("Credit Card")}
               type="button"
             >
@@ -163,7 +163,7 @@ function ChooseTransactionPage() {
             </button>
             <button
               onClick={handleBackClick}
-              className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-semibold text-lg shadow transition"
+              className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-semibold text-lg shadow transition font-[Kameron]"
               type="button"
             >
               Back

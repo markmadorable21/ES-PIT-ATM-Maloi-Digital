@@ -74,10 +74,10 @@ const WithdrawalAmount = ({
   if (step === "loading") {
     return (
       <div className="flex flex-col items-center justify-center mt-10">
-        <span className="text-lg font-semibold">
+        <span className="text-lg font-semibold font-[Kameron]">
           Processing your withdrawal...
         </span>
-        <img src={LoadingGif} alt="Loading..." className="mb-4" />
+        <img src={LoadingGif} alt="Loading..." className="m-5" />
       </div>
     );
   }
@@ -85,18 +85,18 @@ const WithdrawalAmount = ({
   if (step === "receipt") {
     return (
       <div className="flex flex-col items-center justify-center mt-10 gap-6">
-        <span className="text-lg font-semibold">
+        <span className="text-lg font-semibold font-[Kameron]">
           Would you like a printed receipt?
         </span>
         <div className="flex gap-4">
           <button
-            className="bg-[#CD2255] hover:bg-[#a81b44] text-white px-6 py-2 rounded-lg font-semibold transition"
+            className="bg-[#CD2255] hover:bg-[#a81b44] text-white px-6 py-2 rounded-lg font-semibold transition font-[Kameron]"
             onClick={() => handleReceipt(true)}
           >
             Yes
           </button>
           <button
-            className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-6 py-2 rounded-lg font-semibold transition"
+            className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-6 py-2 rounded-lg font-semibold transition font-[Kameron]"
             onClick={() => handleReceipt(false)}
           >
             No
@@ -109,7 +109,7 @@ const WithdrawalAmount = ({
   if (step === "done") {
     return (
       <div className="flex flex-col items-center justify-center mt-10 gap-4">
-        <span className="text-lg font-semibold text-center">
+        <span className="text-lg font-semibold text-center font-[Kameron]">
           Please get your cash and card.
           <br />
           Thank you for doing your business with us!
@@ -163,7 +163,7 @@ const WithdrawalAmount = ({
       </div>
       <div className="mt-3 text-gray-600 text-center">
         <p>
-          <span className="font-medium">Bank fee:</span>{" "}
+          <span className="font-medium font-[Kameron]">Bank fee:</span>{" "}
           <span className="font-semibold text-[#CD2255]">
             ₱{bankFee.toFixed(2)}
           </span>
@@ -173,7 +173,7 @@ const WithdrawalAmount = ({
         <button
           type="button"
           onClick={handleConfirm}
-          className="bg-[#CD2255] hover:bg-[#a81b44] text-white px-6 py-2 rounded-lg font-semibold transition"
+          className="bg-[#CD2255] hover:bg-[#a81b44] text-white px-6 py-2 rounded-lg font-semibold transition font-[Kameron]"
           disabled={!isValidAmount(amount)}
         >
           Confirm
@@ -181,7 +181,7 @@ const WithdrawalAmount = ({
         <button
           type="button"
           onClick={handleCancel} // Trigger to go back to the transaction selection page
-          className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-6 py-2 rounded-lg font-semibold transition"
+          className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-6 py-2 rounded-lg font-semibold transition font-[Kameron]"
         >
           Cancel
         </button>

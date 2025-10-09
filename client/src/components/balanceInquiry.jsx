@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaCreditCard } from "react-icons/fa"; // Example for a card icon
 
 const BalanceInquiry = ({ selectedAccount, onBack, onReceipt }) => {
   const [showReceiptOption, setShowReceiptOption] = useState(false);
@@ -59,37 +60,39 @@ const BalanceInquiry = ({ selectedAccount, onBack, onReceipt }) => {
     >
       {isLoading ? (
         <div className="text-center">
-          <span className="text-lg font-semibold text-gray-700">
+          <span className="text-lg font-semibold text-gray-700 font-[Kameron]">
             Checking balance for selected account...
           </span>
         </div>
       ) : (
         <>
           <div className="text-left">
-            <p className="mt-6 text-lg font-semibold text-[#1d3557]">
+            <p className="mt-6 text-lg font-semibold text-[#1d3557] font-[Kameron]">
+              <FaCreditCard className="inline-block mr-2" />{" "}
+              {/* Icon added here */}
               Account #: {selectedAccount}
             </p>
-            <p className="mt-4 text-2xl font-bold text-[#CD2255]">
+            <p className="mt-4 text-2xl font-bold text-[#CD2255] font-[Kameron]">
               Current Balance: ₱{balance.toFixed(2)}
             </p>
           </div>
           {showTransactionOption && (
             <>
-              <p className="mt-4 text-lg text-gray-700">
+              <p className="mt-4 text-lg text-gray-700 font-[Kameron]">
                 Would you like to do another transaction?
               </p>
               <div className="flex gap-4 mt-5 justify-center">
                 <button
-                  onClick={() => handleTransactionDecision(false)}
-                  className="bg-[#CD2255] text-white px-6 py-3 rounded-lg font-semibold text-lg transition"
-                >
-                  No
-                </button>
-                <button
                   onClick={() => handleTransactionDecision(true)}
-                  className="bg-[#CD2255] text-white px-6 py-3 rounded-lg font-semibold text-lg transition"
+                  className="bg-[#CD2255] text-white px-6 py-3 rounded-lg font-semibold text-lg transition font-[Kameron]"
                 >
                   Yes
+                </button>
+                <button
+                  onClick={() => handleTransactionDecision(false)}
+                  className="bg-[#CD2255] text-white px-6 py-3 rounded-lg font-semibold text-lg transition font-[Kameron]"
+                >
+                  No
                 </button>
               </div>
             </>
@@ -99,19 +102,19 @@ const BalanceInquiry = ({ selectedAccount, onBack, onReceipt }) => {
 
       {showReceiptOption && (
         <div className="text-center mt-5">
-          <p className="text-lg text-gray-700">
+          <p className="text-lg text-gray-700 font-[Kameron]">
             Would you like a printed receipt?
           </p>
           <div className="flex gap-4 mt-5 justify-center">
             <button
               onClick={() => handleReceiptDecision(true)}
-              className="bg-[#CD2255] text-white px-6 py-3 rounded-lg font-semibold text-lg transition"
+              className="bg-[#CD2255] text-white px-6 py-3 rounded-lg font-semibold text-lg transition font-[Kameron]"
             >
               Yes
             </button>
             <button
               onClick={() => handleReceiptDecision(false)}
-              className="bg-[#CD2255] text-white px-6 py-3 rounded-lg font-semibold text-lg transition"
+              className="bg-[#CD2255] text-white px-6 py-3 rounded-lg font-semibold text-lg transition font-[Kameron]"
             >
               No
             </button>
@@ -121,10 +124,12 @@ const BalanceInquiry = ({ selectedAccount, onBack, onReceipt }) => {
 
       {showFinalMessage && !isLoading && (
         <div className="text-center">
-          <p className="text-lg font-semibold text-gray-700">
+          <p className="text-lg font-semibold text-gray-700 font-[Kameron]">
             Thank you for doing your business with us!
           </p>
-          <p className="mt-2 text-lg text-gray-700">Please get your card.</p>
+          <p className="mt-2 text-lg text-gray-700 font-[Kameron]">
+            Please get your card.
+          </p>
         </div>
       )}
     </div>
