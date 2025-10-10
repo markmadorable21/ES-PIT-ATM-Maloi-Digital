@@ -74,15 +74,21 @@ function ChooseTransactionPage() {
 
       {/* Page Content */}
       <div className="absolute inset-0 flex flex-col justify-center px-4">
-        <h1 className="text-3xl sm:text-5xl font-bold text-gray-900 flex gap-2 font-[Kameron]">
-          <img src={atmIcon} alt="ATM Icon" className="h-8 sm:h-9 w-auto" />
+        <h1 className="text-3xl sm:text-5xl font-bold text-gray-900 flex gap-2 font-[Kameron]"
+        style={{ fontSize: "34px", lineHeight: "1" }}
+        >
+          <img src={atmIcon} alt="ATM Icon" className="h-8 sm:h-9 w-auto" style={{ height: "30px" }}  />
           Maloi Digital
         </h1>
-        <p className="text-black text-2xl sm:text-3xl mt-2 font-[Lavishly_Yours]">
+        <p className="text-black text-2xl sm:text-3xl mt-1 font-[Lavishly_Yours]" 
+        style={{ fontSize: "27px", lineHeight: "1" }}
+        >
           All your finances, one place.
         </p>
 
-        <h2 className="text-base sm:text-lg md:text-xl font-semibold text-gray-800 mt-3 font-[Kameron]">
+        <h2 className="text-base sm:text-lg md:text-xl font-semibold text-gray-800 mt-1 font-[Kameron]"
+        style={{ fontSize: "20px", lineHeight: "1" }}
+        >
           {!selectedTransaction
             ? "Please choose your desired transaction"
             : selectedTransaction === "withdrawCash" && !selectedAccount
@@ -98,7 +104,7 @@ function ChooseTransactionPage() {
 
         {/* Main Transaction or Account Selection */}
         {!selectedTransaction ? (
-          <div className="flex flex-col sm:flex-row gap-5 mt-5">
+          <div className="flex flex-col sm:flex-row gap-2 mt-0.5">
             <button
               className="px-6 py-3 bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition font-[Kameron]"
               onClick={() => handleButtonClick("balanceInquiry")}
@@ -122,7 +128,7 @@ function ChooseTransactionPage() {
             </button>
           </div>
         ) : selectedTransaction === "balanceInquiry" && !selectedAccount ? (
-          <div className="flex flex-col sm:flex-row gap-5 mt-5">
+          <div className="flex flex-col sm:flex-row gap-5 mt-1">
             <button
               className="px-6 py-3 bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition font-[Kameron]"
               onClick={() => handleAccountSelection("Savings")}

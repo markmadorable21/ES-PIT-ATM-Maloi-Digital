@@ -50,7 +50,7 @@ const BalanceInquiry = ({ selectedAccount, onBack, onReceipt }) => {
 
   return (
     <div
-      className="flex flex-col items-center justify-center mt-10 max-w-md w-full bg-white rounded-lg shadow-lg p-6"
+      className="flex flex-col items-center justify-center mt-1 max-w-md w-full bg-white rounded-lg shadow-lg p-6"
       style={{
         background: "url('/mnt/data/ecc65478-b87d-4728-83a9-a4c869dd4050.png')", // Update with your image
         backgroundSize: "cover",
@@ -67,7 +67,7 @@ const BalanceInquiry = ({ selectedAccount, onBack, onReceipt }) => {
       ) : (
         <>
           <div className="text-left">
-            <p className="mt-6 text-lg font-semibold text-[#1d3557] font-[Kameron]">
+            <p className="mt-1 text-lg font-semibold text-[#1d3557] font-[Kameron]">
               <FaCreditCard className="inline-block mr-2" />{" "}
               {/* Icon added here */}
               Account #: {selectedAccount}
