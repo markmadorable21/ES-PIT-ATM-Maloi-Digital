@@ -1,9 +1,9 @@
 // App.jsx
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-import LandingPage from "./pages/landingPage";
+import LandingPage from './pages/landingPage';
 // Make sure your page default-exports a PascalCase component:
-import ChooseTransaction from "./pages/chooseTransactionPage";
+import ChooseTransaction from './pages/chooseTransactionPage';
 
 function App() {
   return (

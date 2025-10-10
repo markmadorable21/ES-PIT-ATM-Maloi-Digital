@@ -1,29 +1,27 @@
-import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import backGroundImage from "../assets/background imge.png";
-import masterCard from "../assets/mastercard.png";
-import visaCard from "../assets/visa.png";
-import gCash from "../assets/gcash.png";
-import atmIcon from "../assets/atm.png";
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import backGroundImage from '../assets/unnamed-Picsart-AiImageEnhancer - Copy.png';
+import masterCard from '../assets/mastercard.png';
+import visaCard from '../assets/visa.png';
+import gCash from '../assets/gcash.png';
+import atmIcon from '../assets/atm.png';
 
 function LandingPage() {
-  const [time, setTime] = useState("");
-  const [phase, setPhase] = useState("welcome"); // "welcome" | "pin" | "processing"
-  const [pin, setPin] = useState(["", "", "", ""]);
+  const [time, setTime] = useState('');
+  const [phase, setPhase] = useState('welcome');
+  const [pin, setPin] = useState(['', '', '', '']);
   const inputsRef = useRef([]);
   const navigate = useNavigate();
 
-  const onPinSuccess = () => {
-    navigate("/choose-transaction");
-  };
+  const onPinSuccess = () => navigate('/choose-transaction');
 
-  // Time updater
+  // 🕒 live clock
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
       const formatted = now.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
+        hour: '2-digit',
+        minute: '2-digit',
         hour12: true,
       });
       setTime(formatted);
@@ -33,126 +31,109 @@ function LandingPage() {
     return () => clearInterval(timer);
   }, []);
 
-  // Card recognition (call this from your real card reader)
+  // 💳 card simulation
   const handleCardRecognized = () => {
-    setPhase("pin");
+    setPhase('pin');
     setTimeout(() => inputsRef.current[0]?.focus(), 50);
   };
-
-  // Dev: simulate card insert
   const simulateCardInsert = () => handleCardRecognized();
 
-  // PIN handlers
+  // 🔢 PIN logic
   const handlePinChange = (idx, value) => {
-    const v = value.replace(/\D/g, "").slice(0, 1);
+    const v = value.replace(/\D/g, '').slice(0, 1);
     const next = [...pin];
     next[idx] = v;
     setPin(next);
-    if (v && idx < inputsRef.current.length - 1) {
+    if (v && idx < inputsRef.current.length - 1)
       inputsRef.current[idx + 1]?.focus();
-    }
   };
-
   const handlePinKeyDown = (idx, e) => {
-    if (e.key === "Backspace" && !pin[idx] && idx > 0) {
+    if (e.key === 'Backspace' && !pin[idx] && idx > 0)
       inputsRef.current[idx - 1]?.focus();
-    }
-    if (e.key === "ArrowLeft" && idx > 0) inputsRef.current[idx - 1]?.focus();
-    if (e.key === "ArrowRight" && idx < inputsRef.current.length - 1)
+    if (e.key === 'ArrowLeft' && idx > 0) inputsRef.current[idx - 1]?.focus();
+    if (e.key === 'ArrowRight' && idx < inputsRef.current.length - 1)
       inputsRef.current[idx + 1]?.focus();
-    if (e.key === "Enter" && isPinReady) handleSubmitPin();
+    if (e.key === 'Enter' && isPinReady) handleSubmitPin();
   };
-
   const isPinReady = pin.every((d) => d.length === 1);
-
   const handleSubmitPin = () => {
     if (!isPinReady) return;
-    setPhase("processing");
-    const pinValue = pin.join("");
-    console.log("Submitting PIN:", pinValue);
-
-    // Simulate async verify, then go
-    setTimeout(() => {
-      onPinSuccess(); // <-- navigate after "verification"
-    }, 500);
+    setPhase('processing');
+    const pinValue = pin.join('');
+    console.log('Submitting PIN:', pinValue);
+    setTimeout(onPinSuccess, 500);
   };
 
   return (
     <div
-      className="relative flex min-h-screen items-center justify-center bg-white overflow-hidden"
+      className="relative flex items-center justify-center bg-white overflow-hidden"
       style={{
+        width: '800px',
+        height: '480px',
         backgroundImage: `url(${backGroundImage})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center 20px",
-        backgroundRepeat: "no-repeat",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
       }}
     >
-      {/* Top Navigation */}
-      <nav className="absolute top-0 left-0 w-full px-2 sm:px-4 py-2 sm:py-3 flex flex-col md:flex-row md:items-center md:justify-between bg-[#CD2255] text-white text-xs sm:text-base z-10 gap-2 sm:gap-3">
-        <div className="text-center md:text-left">{time}</div>
-
-        <div className="flex items-center justify-center gap-3 sm:gap-4 flex-wrap">
-          <img src={masterCard} alt="MasterCard" className="h-5 sm:h-8" />
-          <img src={visaCard} alt="Visa" className="h-5 sm:h-8" />
-          <img src={gCash} alt="GCash" className="h-5 sm:h-8" />
+      {/* 🔝 Top Navigation Bar */}
+      <nav className="absolute top-0 left-0 w-full h-[40px] flex items-center justify-between px-4 bg-[#CD2255] text-white text-[10px] sm:text-xs font-[Kameron]">
+        <span>{time}</span>
+        <div className="flex items-center gap-2">
+          <img src={masterCard} alt="MasterCard" className="h-4" />
+          <img src={visaCard} alt="Visa" className="h-4" />
+          <img src={gCash} alt="GCash" className="h-4" />
         </div>
-
-        <div className="text-center md:text-right text-sm sm:text-base md:text-lg leading-tight">
-          For inquiries, please contact <br className="block md:hidden" />
-          <span className="font-medium">+63 905 724 6967</span>
-        </div>
+        <span className="text-[9px] text-right leading-tight">
+          For inquiries, contact <br />
+          <strong>+63 905 724 6967</strong>
+        </span>
       </nav>
 
-      {/* Right / Upper text content */}
-      <div className="absolute inset-y-5 right-5 w-[44%] min-w-[300px] flex items-start justify-end pt-2 sm:pt-28 md:pt-32 pr-4 sm:pr-8 md:pr-16 lg:pr-24 text-left m-2 mx-10">
-        <div className="max-w-full h-auto flex flex-col items-start p-4">
-          {/* Title row */}
-          <div className="flex flex-nowrap items-baseline gap-3">
-            <h1
-              className="whitespace-nowrap font-[Kameron] tracking-tight leading-[0.95]
-                 text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-black"
-            >
-              {"Maloi\u00A0Digital"}
-            </h1>
-            <img
-              src={atmIcon}
-              alt="ATM Icon"
-              className="h-[3em] w-auto translate-y-[2px]"
-            />
-          </div>
+      {/* 🧭 Right Panel */}
+      <div className="absolute right-0 top-[45px] bottom-0 w-[46%] flex flex-col justify-start px-4 pt-3 text-left bg-white/60 backdrop-blur-[1px]">
+        {/* Static header */}
+        <div className="flex items-baseline gap-2">
+          <h1 className="font-[Kameron] text-[26px] sm:text-[30px] font-extrabold text-black whitespace-nowrap">
+            Maloi&nbsp;Digital
+          </h1>
+          <img
+            src={atmIcon}
+            alt="ATM"
+            className="h-[28px] w-auto translate-y-[1px]"
+          />
+        </div>
+        <p className="text-black text-[18px] sm:text-[20px] mt-1 font-[Lavishly_Yours]">
+          All your finances, one place.
+        </p>
 
-          <p className="text-black text-2xl sm:text-3xl mt-2 font-[Lavishly_Yours]">
-            All your finances, one place.
-          </p>
-
-          {/* ====== FLOW CONTENT ====== */}
-          {phase === "welcome" && (
+        {/* Dynamic section */}
+        <div className="mt-3 flex flex-col items-start justify-start w-full overflow-hidden">
+          {phase === 'welcome' && (
             <>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl mt-8 font-[Kameron]">
+              <h2 className="text-[22px] sm:text-[24px] mt-3 font-[Kameron] font-semibold">
                 Welcome, again!
               </h2>
-              <p className="text-base sm:text-lg md:text-xl text-black mt-3 font-[Kameron]">
+              <p className="text-[14px] sm:text-[16px] text-black mt-2 font-[Kameron]">
                 Please insert your card.
               </p>
 
-              {/* Dev-only: simulate card insert */}
               <button
                 onClick={simulateCardInsert}
-                className="mt-6 rounded-full bg-gray-900/10 px-4 py-2 text-sm text-gray-700 hover:bg-gray-900/20"
+                className="mt-4 rounded-full bg-gray-900/10 px-4 py-1.5 text-[12px] text-gray-700 hover:bg-gray-900/20"
               >
                 Simulate card insert (dev)
               </button>
             </>
           )}
 
-          {phase === "pin" && (
-            <div className="mt-8 w-full">
-              <p className="font-[Kameron] text-xl md:text-2xl text-gray-900">
+          {phase === 'pin' && (
+            <div className="mt-3 w-full">
+              <p className="font-[Kameron] text-[16px] text-gray-900">
                 Please enter your Personal Identification Number (PIN)
               </p>
 
-              {/* PIN boxes */}
-              <div className="mt-4 flex gap-4 justify-center">
+              <div className="mt-3 flex gap-3 justify-center">
                 {pin.map((digit, i) => (
                   <input
                     key={i}
@@ -163,22 +144,21 @@ function LandingPage() {
                     maxLength={1}
                     onChange={(e) => handlePinChange(i, e.target.value)}
                     onKeyDown={(e) => handlePinKeyDown(i, e)}
-                    className="h-14 w-14 rounded-md border-2 border-gray-600 bg-white text-center text-2xl font-[Kameron] tracking-widest shadow-sm focus:border-[#CD2255] focus:outline-none focus:ring-2 focus:ring-[#CD2255]/30"
+                    className="h-10 w-10 rounded-md border-2 border-gray-600 bg-white text-center text-[18px] font-[Kameron] focus:border-[#CD2255] focus:ring-2 focus:ring-[#CD2255]/30 outline-none"
                     type="password"
                     autoComplete="off"
                   />
                 ))}
               </div>
 
-              {/* Enter button */}
-              <div className="mt-6 flex justify-center">
+              <div className="mt-4 flex justify-center">
                 <button
                   onClick={handleSubmitPin}
                   disabled={!isPinReady}
-                  className={`w-56 rounded-full px-6 py-3 text-lg font-semibold text-white shadow-lg ${
+                  className={`w-40 rounded-full px-4 py-2 text-[14px] font-semibold text-white shadow-lg ${
                     isPinReady
-                      ? "bg-[#CD2255] hover:brightness-110"
-                      : "bg-[#CD2255]/60 cursor-not-allowed"
+                      ? 'bg-[#CD2255] hover:brightness-110'
+                      : 'bg-[#CD2255]/60 cursor-not-allowed'
                   }`}
                 >
                   Enter
@@ -187,14 +167,13 @@ function LandingPage() {
             </div>
           )}
 
-          {phase === "processing" && (
-            <div className="mt-8">
-              <p className="font-[Kameron] text-xl md:text-2xl text-gray-900">
+          {phase === 'processing' && (
+            <div className="mt-4">
+              <p className="font-[Kameron] text-[18px] text-gray-900">
                 Processing…
               </p>
             </div>
           )}
-          {/* ====== /FLOW CONTENT ====== */}
         </div>
       </div>
     </div>

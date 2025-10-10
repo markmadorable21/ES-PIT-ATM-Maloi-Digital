@@ -1,14 +1,14 @@
-import { useState, useEffect } from "react";
-import WithdrawalAmount from "../components/withdrawalAmount";
-import BalanceInquiry from "../components/balanceInquiry";
-import backGroundImage from "../assets/atm-background-image.png";
-import masterCard from "../assets/mastercard.png";
-import visaCard from "../assets/visa.png";
-import gCash from "../assets/gcash.png";
-import atmIcon from "../assets/atm.png";
+import { useState, useEffect } from 'react';
+import WithdrawalAmount from '../components/withdrawalAmount';
+import BalanceInquiry from '../components/balanceInquiry';
+import backGroundImage from '../assets/atm-background-image.png';
+import masterCard from '../assets/mastercard.png';
+import visaCard from '../assets/visa.png';
+import gCash from '../assets/gcash.png';
+import atmIcon from '../assets/atm.png';
 
 function ChooseTransactionPage() {
-  const [time, setTime] = useState("");
+  const [time, setTime] = useState('');
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [amount, setAmount] = useState(0);
@@ -18,8 +18,8 @@ function ChooseTransactionPage() {
     const updateTime = () => {
       const now = new Date();
       const formatted = now.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
+        hour: '2-digit',
+        minute: '2-digit',
         hour12: true,
       });
       setTime(formatted);
@@ -51,11 +51,11 @@ function ChooseTransactionPage() {
       className="flex items-center justify-center min-h-screen bg-white relative"
       style={{
         backgroundImage: `linear-gradient(to right, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.7) 40%, rgba(255,255,255,0) 100%), url(${backGroundImage})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-        minHeight: "100vh",
-        width: "100vw",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        minHeight: '100vh',
+        width: '100vw',
       }}
     >
       {/* Top Navigation */}
@@ -84,16 +84,16 @@ function ChooseTransactionPage() {
 
         <h2 className="text-base sm:text-lg md:text-xl font-semibold text-gray-800 mt-3 font-[Kameron]">
           {!selectedTransaction
-            ? "Please choose your desired transaction"
-            : selectedTransaction === "withdrawCash" && !selectedAccount
-            ? "Please choose your desired account for withdrawal"
-            : selectedTransaction === "balanceInquiry" && !selectedAccount
-            ? "Please choose your desired account for balance inquiry"
-            : selectedTransaction === "withdrawCash" && selectedAccount
-            ? "Please enter the withdrawal amount"
-            : selectedTransaction === "balanceInquiry" && selectedAccount
-            ? "Checking balance for selected account..."
-            : ""}
+            ? 'Please choose your desired transaction'
+            : selectedTransaction === 'withdrawCash' && !selectedAccount
+            ? 'Please choose your desired account for withdrawal'
+            : selectedTransaction === 'balanceInquiry' && !selectedAccount
+            ? 'Please choose your desired account for balance inquiry'
+            : selectedTransaction === 'withdrawCash' && selectedAccount
+            ? 'Please enter the withdrawal amount'
+            : selectedTransaction === 'balanceInquiry' && selectedAccount
+            ? 'Checking balance for selected account...'
+            : ''}
         </h2>
 
         {/* Main Transaction or Account Selection */}
@@ -101,38 +101,38 @@ function ChooseTransactionPage() {
           <div className="flex flex-col sm:flex-row gap-5 mt-5">
             <button
               className="px-6 py-3 bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition font-[Kameron]"
-              onClick={() => handleButtonClick("balanceInquiry")}
+              onClick={() => handleButtonClick('balanceInquiry')}
               type="button"
             >
               Balance Inquiry
             </button>
             <button
               className="px-6 py-3 bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition font-[Kameron]"
-              onClick={() => handleButtonClick("withdrawCash")}
+              onClick={() => handleButtonClick('withdrawCash')}
               type="button"
             >
               Withdraw Cash
             </button>
             <button
               className="px-6 py-3 bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition font-[Kameron]"
-              onClick={() => handleButtonClick("changePin")}
+              onClick={() => handleButtonClick('changePin')}
               type="button"
             >
               Change PIN
             </button>
           </div>
-        ) : selectedTransaction === "balanceInquiry" && !selectedAccount ? (
+        ) : selectedTransaction === 'balanceInquiry' && !selectedAccount ? (
           <div className="flex flex-col sm:flex-row gap-5 mt-5">
             <button
               className="px-6 py-3 bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition font-[Kameron]"
-              onClick={() => handleAccountSelection("Savings")}
+              onClick={() => handleAccountSelection('Savings')}
               type="button"
             >
               Savings
             </button>
             <button
               className="px-6 py-3 bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition font-[Kameron]"
-              onClick={() => handleAccountSelection("Credit Card")}
+              onClick={() => handleAccountSelection('Credit Card')}
               type="button"
             >
               Credit Card
@@ -145,18 +145,18 @@ function ChooseTransactionPage() {
               Back
             </button>
           </div>
-        ) : selectedTransaction === "withdrawCash" && !selectedAccount ? (
+        ) : selectedTransaction === 'withdrawCash' && !selectedAccount ? (
           <div className="flex flex-col sm:flex-row gap-5 mt-5">
             <button
               className="px-6 py-3 bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition font-[Kameron]"
-              onClick={() => handleAccountSelection("Savings")}
+              onClick={() => handleAccountSelection('Savings')}
               type="button"
             >
               Savings
             </button>
             <button
               className="px-6 py-3 bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition font-[Kameron]"
-              onClick={() => handleAccountSelection("Credit Card")}
+              onClick={() => handleAccountSelection('Credit Card')}
               type="button"
             >
               Credit Card
@@ -169,7 +169,7 @@ function ChooseTransactionPage() {
               Back
             </button>
           </div>
-        ) : selectedTransaction === "withdrawCash" && selectedAccount ? (
+        ) : selectedTransaction === 'withdrawCash' && selectedAccount ? (
           <WithdrawalAmount
             amount={amount}
             setAmount={setAmount}
@@ -177,7 +177,7 @@ function ChooseTransactionPage() {
             setBankFee={setBankFee}
             onCancel={handleBackClick} // Pass the onCancel prop to go back to the selection screen
           />
-        ) : selectedTransaction === "balanceInquiry" && selectedAccount ? (
+        ) : selectedTransaction === 'balanceInquiry' && selectedAccount ? (
           <BalanceInquiry
             selectedAccount={selectedAccount}
             onBack={handleBackClick}
