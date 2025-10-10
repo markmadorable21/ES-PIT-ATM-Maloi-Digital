@@ -8,7 +8,8 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<ChooseTransactionPage />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/choose-transaction" element={<ChooseTransactionPage />} />
       </Routes>
     </BrowserRouter>
   );

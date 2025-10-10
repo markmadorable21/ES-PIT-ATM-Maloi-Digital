@@ -1,15 +1,20 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import backGroundImage from '../assets/images/background imge.png';
 import masterCard from '../assets/images/mastercard.png';
 import visaCard from '../assets/images/visa.png';
 import gCash from '../assets/images/gcash.png';
 import atmIcon from '../assets/images/atm.png';
+import { useNavigate } from 'react-router-dom';
 
 function LandingPage() {
+  const navigate = useNavigate();
   const [time, setTime] = useState(' ');
+  const [pin, setPin] = useState(['', '', '', '']); // 4-digit PIN
+  const [phase, setPhase] = useState('welcome'); // to track app phase
+  const inputsRef = useRef([]); // to store input element refs
 
   const onPinSuccess = () => {
-    navigate("/choose-transaction");
+    navigate('/choose-transaction');
   };
 
   // Time updater
@@ -30,7 +35,7 @@ function LandingPage() {
 
   // Card recognition (call this from your real card reader)
   const handleCardRecognized = () => {
-    setPhase("pin");
+    setPhase('pin');
     setTimeout(() => inputsRef.current[0]?.focus(), 50);
   };
 
@@ -39,7 +44,7 @@ function LandingPage() {
 
   // PIN handlers
   const handlePinChange = (idx, value) => {
-    const v = value.replace(/\D/g, "").slice(0, 1);
+    const v = value.replace(/\D/g, '').slice(0, 1);
     const next = [...pin];
     next[idx] = v;
     setPin(next);
@@ -49,22 +54,22 @@ function LandingPage() {
   };
 
   const handlePinKeyDown = (idx, e) => {
-    if (e.key === "Backspace" && !pin[idx] && idx > 0) {
+    if (e.key === 'Backspace' && !pin[idx] && idx > 0) {
       inputsRef.current[idx - 1]?.focus();
     }
-    if (e.key === "ArrowLeft" && idx > 0) inputsRef.current[idx - 1]?.focus();
-    if (e.key === "ArrowRight" && idx < inputsRef.current.length - 1)
+    if (e.key === 'ArrowLeft' && idx > 0) inputsRef.current[idx - 1]?.focus();
+    if (e.key === 'ArrowRight' && idx < inputsRef.current.length - 1)
       inputsRef.current[idx + 1]?.focus();
-    if (e.key === "Enter" && isPinReady) handleSubmitPin();
+    if (e.key === 'Enter' && isPinReady) handleSubmitPin();
   };
 
   const isPinReady = pin.every((d) => d.length === 1);
 
   const handleSubmitPin = () => {
     if (!isPinReady) return;
-    setPhase("processing");
-    const pinValue = pin.join("");
-    console.log("Submitting PIN:", pinValue);
+    setPhase('processing');
+    const pinValue = pin.join('');
+    console.log('Submitting PIN:', pinValue);
 
     // Simulate async verify, then go
     setTimeout(() => {
@@ -109,7 +114,7 @@ function LandingPage() {
               className="whitespace-nowrap font-[Kameron] tracking-tight leading-[0.95]
                  text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-black"
             >
-              {"Maloi\u00A0Digital"}
+              {'Maloi\u00A0Digital'}
             </h1>
             <img
               src={atmIcon}
@@ -123,7 +128,7 @@ function LandingPage() {
           </p>
 
           {/* ====== FLOW CONTENT ====== */}
-          {phase === "welcome" && (
+          {phase === 'welcome' && (
             <>
               <h2 className="text-2xl sm:text-3xl md:text-4xl mt-8 font-[Kameron]">
                 Welcome, again!
@@ -142,7 +147,7 @@ function LandingPage() {
             </>
           )}
 
-          {phase === "pin" && (
+          {phase === 'pin' && (
             <div className="mt-8 w-full">
               <p className="font-[Kameron] text-xl md:text-2xl text-gray-900">
                 Please enter your Personal Identification Number (PIN)
@@ -174,8 +179,8 @@ function LandingPage() {
                   disabled={!isPinReady}
                   className={`w-56 rounded-full px-6 py-3 text-lg font-semibold text-white shadow-lg ${
                     isPinReady
-                      ? "bg-[#CD2255] hover:brightness-110"
-                      : "bg-[#CD2255]/60 cursor-not-allowed"
+                      ? 'bg-[#CD2255] hover:brightness-110'
+                      : 'bg-[#CD2255]/60 cursor-not-allowed'
                   }`}
                 >
                   Enter
@@ -184,7 +189,7 @@ function LandingPage() {
             </div>
           )}
 
-          {phase === "processing" && (
+          {phase === 'processing' && (
             <div className="mt-8">
               <p className="font-[Kameron] text-xl md:text-2xl text-gray-900">
                 Processing…
