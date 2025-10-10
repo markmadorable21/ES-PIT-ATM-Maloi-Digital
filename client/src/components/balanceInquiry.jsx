@@ -67,7 +67,7 @@ const BalanceInquiry = ({ selectedAccount, onBack, onReceipt }) => {
       ) : (
         <>
           <div className="text-left">
-            <p className="mt-6 text-lg font-semibold text-[#1d3557] font-[Kameron]">
+            <p className="mt-0.5 text-lg font-semibold text-[#1d3557] font-[Kameron]">
               <FaCreditCard className="inline-block mr-2" />{" "}
               {/* Icon added here */}
               Account #: {selectedAccount}
