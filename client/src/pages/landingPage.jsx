@@ -107,7 +107,7 @@ function LandingPage() {
           </div>
 
           <div className="text-right leading-tight">
-            For inquiries, contact<br />
+            For inquiries, contact:<br />
             <span className="font-semibold text-[13px]">+63 905 724 6967</span>
           </div>
         </nav>
