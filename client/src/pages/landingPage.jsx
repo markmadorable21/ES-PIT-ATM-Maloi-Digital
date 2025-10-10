@@ -8,7 +8,7 @@ import atmIcon from "../assets/atm.png";
 
 function LandingPage() {
   const [time, setTime] = useState("");
-  const [phase, setPhase] = useState("welcome"); // "welcome" | "pin" | "processing"
+  const [phase, setPhase] = useState("welcome");
   const [pin, setPin] = useState(["", "", "", ""]);
   const inputsRef = useRef([]);
   const navigate = useNavigate();
@@ -17,7 +17,7 @@ function LandingPage() {
     navigate("/choose-transaction");
   };
 
-  // Time updater
+  // ⏰ Update time every second
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
@@ -33,16 +33,15 @@ function LandingPage() {
     return () => clearInterval(timer);
   }, []);
 
-  // Card recognition (call this from your real card reader)
+  // 💳 Simulated card insert
   const handleCardRecognized = () => {
     setPhase("pin");
     setTimeout(() => inputsRef.current[0]?.focus(), 50);
   };
 
-  // Dev: simulate card insert
   const simulateCardInsert = () => handleCardRecognized();
 
-  // PIN handlers
+  // 🔢 PIN input handling
   const handlePinChange = (idx, value) => {
     const v = value.replace(/\D/g, "").slice(0, 1);
     const next = [...pin];
@@ -54,13 +53,14 @@ function LandingPage() {
   };
 
   const handlePinKeyDown = (idx, e) => {
-    if (e.key === "Backspace" && !pin[idx] && idx > 0) {
+    if (e.key === "Backspace" && !pin[idx] && idx > 0)
       inputsRef.current[idx - 1]?.focus();
-    }
-    if (e.key === "ArrowLeft" && idx > 0) inputsRef.current[idx - 1]?.focus();
+    if (e.key === "ArrowLeft" && idx > 0)
+      inputsRef.current[idx - 1]?.focus();
     if (e.key === "ArrowRight" && idx < inputsRef.current.length - 1)
       inputsRef.current[idx + 1]?.focus();
-    if (e.key === "Enter" && isPinReady) handleSubmitPin();
+    if (e.key === "Enter" && isPinReady)
+      handleSubmitPin();
   };
 
   const isPinReady = pin.every((d) => d.length === 1);
@@ -71,74 +71,98 @@ function LandingPage() {
     const pinValue = pin.join("");
     console.log("Submitting PIN:", pinValue);
 
-    // Simulate async verify, then go
-    setTimeout(() => {
-      onPinSuccess(); // <-- navigate after "verification"
-    }, 500);
+    setTimeout(() => onPinSuccess(), 500);
   };
 
   return (
-    <div
-      className="relative flex min-h-screen items-center justify-center bg-white overflow-hidden"
-      style={{
-        backgroundImage: `url(${backGroundImage})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center 20px",
-        backgroundRepeat: "no-repeat",
-      }}
-    >
-      {/* Top Navigation */}
-      <nav className="absolute top-0 left-0 w-full px-2 sm:px-4 py-2 sm:py-3 flex flex-col md:flex-row md:items-center md:justify-between bg-[#CD2255] text-white text-xs sm:text-base z-10 gap-2 sm:gap-3">
-        <div className="text-center md:text-left">{time}</div>
+    // Outer wrapper centers the ATM screen
+    <div className="flex items-center justify-center min-h-screen bg-gray-300">
+      {/* Fixed ATM screen container */}
+      <div
+        className="relative overflow-hidden rounded-lg shadow-2xl flex flex-col"
+        style={{
+          width: "800px",
+          height: "480px",
+          border: "8px solid black",
+          backgroundImage: `url(${backGroundImage})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        {/* 🔺 Top Navigation Bar */}
+        <nav
+          className="flex justify-between items-center px-4 py-2 text-white"
+          style={{
+            backgroundColor: "#CD2255",
+            height: "50px",
+            fontSize: "14px",
+          }}
+        >
+          <div>{time}</div>
 
-        <div className="flex items-center justify-center gap-3 sm:gap-4 flex-wrap">
-          <img src={masterCard} alt="MasterCard" className="h-5 sm:h-8" />
-          <img src={visaCard} alt="Visa" className="h-5 sm:h-8" />
-          <img src={gCash} alt="GCash" className="h-5 sm:h-8" />
-        </div>
-
-        <div className="text-center md:text-right text-sm sm:text-base md:text-lg leading-tight">
-          For inquiries, please contact <br className="block md:hidden" />
-          <span className="font-medium">+63 905 724 6967</span>
-        </div>
-      </nav>
-
-      {/* Right / Upper text content */}
-      <div className="absolute inset-y-5 right-5 w-[44%] min-w-[300px] flex items-start justify-end pt-2 sm:pt-28 md:pt-32 pr-4 sm:pr-8 md:pr-16 lg:pr-24 text-left m-2 mx-10">
-        <div className="max-w-full h-auto flex flex-col items-start p-4">
-          {/* Title row */}
-          <div className="flex flex-nowrap items-baseline gap-3">
-            <h1
-              className="whitespace-nowrap font-[Kameron] tracking-tight leading-[0.95]
-                 text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-black"
-            >
-              {"Maloi\u00A0Digital"}
-            </h1>
-            <img
-              src={atmIcon}
-              alt="ATM Icon"
-              className="h-[3em] w-auto translate-y-[2px]"
-            />
+          <div className="flex items-center gap-3">
+            <img src={masterCard} alt="MasterCard" style={{ height: "20px" }} />
+            <img src={visaCard} alt="Visa" style={{ height: "20px" }} />
+            <img src={gCash} alt="GCash" style={{ height: "20px" }} />
           </div>
 
-          <p className="text-black text-2xl sm:text-3xl mt-2 font-[Lavishly_Yours]">
+          <div className="text-right leading-tight">
+            For inquiries, contact<br />
+            <span className="font-semibold text-[13px]">+63 905 724 6967</span>
+          </div>
+        </nav>
+
+        {/* 💬 Main Content (Right Side, Left-Aligned) */}
+        <div
+          className="flex flex-col justify-center items-start text-left"
+          style={{
+            flex: 1,
+            width: "50%", // occupy right half of the screen
+            paddingLeft: "40px",
+            paddingRight: "40px",
+            position: "absolute",
+            right: -100, 
+            top: 0,
+            bottom: 0,
+          }}
+        >
+          {/* Title */}
+          <div className="flex items-center gap-3">
+            <h1
+              className="font-[Kameron] font-extrabold text-black tracking-tight"
+              style={{ fontSize: "32px", lineHeight: "1" }}
+            >
+              Maloi Digital
+            </h1>
+            <img src={atmIcon} alt="ATM Icon" style={{ height: "34px" }} />
+          </div>
+
+          <p
+            className="font-[Lavishly_Yours] text-black"
+            style={{ fontSize: "20px", marginTop: "4px" }}
+          >
             All your finances, one place.
           </p>
 
-          {/* ====== FLOW CONTENT ====== */}
+          {/* 👇 Dynamic Phases */}
           {phase === "welcome" && (
             <>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl mt-8 font-[Kameron]">
+              <h2
+                className="font-[Kameron] text-black"
+                style={{ fontSize: "26px", marginTop: "28px" }}
+              >
                 Welcome, again!
               </h2>
-              <p className="text-base sm:text-lg md:text-xl text-black mt-3 font-[Kameron]">
+              <p
+                className="font-[Kameron] text-black"
+                style={{ fontSize: "18px", marginTop: "8px" }}
+              >
                 Please insert your card.
               </p>
 
-              {/* Dev-only: simulate card insert */}
               <button
                 onClick={simulateCardInsert}
-                className="mt-6 rounded-full bg-gray-900/10 px-4 py-2 text-sm text-gray-700 hover:bg-gray-900/20"
+                className="mt-5 bg-gray-900/10 px-4 py-2 text-sm text-gray-800 rounded-full hover:bg-gray-900/20"
               >
                 Simulate card insert (dev)
               </button>
@@ -146,13 +170,16 @@ function LandingPage() {
           )}
 
           {phase === "pin" && (
-            <div className="mt-8 w-full">
-              <p className="font-[Kameron] text-xl md:text-2xl text-gray-900">
+            <div style={{ marginTop: "24px" }}>
+              <p
+                className="font-[Kameron] text-gray-900"
+                style={{ fontSize: "20px" }}
+              >
                 Please enter your Personal Identification Number (PIN)
               </p>
 
-              {/* PIN boxes */}
-              <div className="mt-4 flex gap-4 justify-center">
+              {/* PIN input fields */}
+              <div className="flex gap-3 mt-3">
                 {pin.map((digit, i) => (
                   <input
                     key={i}
@@ -163,23 +190,29 @@ function LandingPage() {
                     maxLength={1}
                     onChange={(e) => handlePinChange(i, e.target.value)}
                     onKeyDown={(e) => handlePinKeyDown(i, e)}
-                    className="h-14 w-14 rounded-md border-2 border-gray-600 bg-white text-center text-2xl font-[Kameron] tracking-widest shadow-sm focus:border-[#CD2255] focus:outline-none focus:ring-2 focus:ring-[#CD2255]/30"
                     type="password"
                     autoComplete="off"
+                    className="text-center border-2 border-gray-600 rounded-md focus:border-[#CD2255] focus:ring-2 focus:ring-[#CD2255]/30 outline-none"
+                    style={{
+                      width: "50px",
+                      height: "50px",
+                      fontSize: "22px",
+                      background: "white",
+                    }}
                   />
                 ))}
               </div>
 
-              {/* Enter button */}
-              <div className="mt-6 flex justify-center">
+              <div className="flex justify-start mt-5">
                 <button
                   onClick={handleSubmitPin}
                   disabled={!isPinReady}
-                  className={`w-56 rounded-full px-6 py-3 text-lg font-semibold text-white shadow-lg ${
+                  className={`rounded-full text-white font-semibold shadow-md ${
                     isPinReady
                       ? "bg-[#CD2255] hover:brightness-110"
                       : "bg-[#CD2255]/60 cursor-not-allowed"
                   }`}
+                  style={{ width: "160px", height: "42px", fontSize: "16px" }}
                 >
                   Enter
                 </button>
@@ -188,13 +221,13 @@ function LandingPage() {
           )}
 
           {phase === "processing" && (
-            <div className="mt-8">
-              <p className="font-[Kameron] text-xl md:text-2xl text-gray-900">
-                Processing…
-              </p>
-            </div>
+            <p
+              className="font-[Kameron] text-gray-900 mt-6"
+              style={{ fontSize: "22px" }}
+            >
+              Processing…
+            </p>
           )}
-          {/* ====== /FLOW CONTENT ====== */}
         </div>
       </div>
     </div>
