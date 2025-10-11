@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import WithdrawalAmount from '../components/withdrawalAmount';
 import BalanceInquiry from '../components/balanceInquiry';
+import TransactionHistory from '../components/transactionHistory';
 import backGroundImage from '../assets/atm-background-image.png';
 import masterCard from '../assets/mastercard.png';
 import visaCard from '../assets/visa.png';
@@ -115,10 +116,10 @@ function ChooseTransactionPage() {
             </button>
             <button
               className="px-6 py-3 bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition font-[Kameron]"
-              onClick={() => handleButtonClick('changePin')}
+              onClick={() => handleButtonClick('transactionHistory')}
               type="button"
             >
-              Change PIN
+              Transaction History
             </button>
           </div>
         ) : selectedTransaction === 'balanceInquiry' && !selectedAccount ? (
@@ -178,11 +179,13 @@ function ChooseTransactionPage() {
             onCancel={handleBackClick} // Pass the onCancel prop to go back to the selection screen
           />
         ) : selectedTransaction === 'balanceInquiry' && selectedAccount ? (
-          <BalanceInquiry
-            selectedAccount={selectedAccount}
-            onBack={handleBackClick}
-          />
-        ) : null}
+            <BalanceInquiry
+              selectedAccount={selectedAccount}
+              onBack={handleBackClick}
+            />
+          ) : selectedTransaction === 'transactionHistory' ? (
+            <TransactionHistory onBack={handleBackClick} />
+          ) : null}
       </div>
     </div>
   );
