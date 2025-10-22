@@ -12,8 +12,33 @@ function LandingPage() {
   const [pin, setPin] = useState(["", "", "", ""]);
   const inputsRef = useRef([]);
   const navigate = useNavigate();
+  const [rfidTag, setRfidTag] = useState(null);
 
   const onPinSuccess = () => navigate("/choose-transaction");
+
+  useEffect(() => {
+  const interval = setInterval(async () => {
+    if (phase !== "welcome") return;
+
+    try {
+      const res = await fetch("http://localhost:8000/rfid/latest");
+      const data = await res.json();
+
+      if (data.rfid_tag) {
+        console.log("Detected RFID:", data.rfid_tag);
+        setRfidTag(data.rfid_tag);
+        setPhase("pin");
+        setTimeout(() => inputsRef.current[0]?.focus(), 200);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }, 1000);
+
+  return () => clearInterval(interval);
+}, [phase]); // <-- include phase
+
+
 
   // 🕒 live clock
   useEffect(() => {
@@ -58,26 +83,69 @@ function LandingPage() {
   };
 
   const isPinReady = pin.every((d) => d.length === 1);
-  const handleSubmitPin = () => {
-    if (!isPinReady) return;
-    setPhase("processing");
-    const pinValue = pin.join("");
-    console.log("Submitting PIN:", pinValue);
+ const handleSubmitPin = async () => {
+  // 1️⃣ Ensure PIN is fully entered
+  if (!isPinReady) return;
+
+  // 2️⃣ Ensure RFID tag exists
+  if (!rfidTag) {
+    alert("RFID card not detected. Please insert your card.");
+    setPhase("welcome");
+    return;
+  }
+
+  setPhase("processing");
+
+  // 3️⃣ Combine PIN digits and trim any extra whitespace
+  const pinValue = pin.join("").trim();
+
+  try {
+    const res = await fetch(`http://localhost:8000/verify-pin/${rfidTag}/${pinValue}`, {
+      method: "POST",
+    });
+
+    // 4️⃣ Parse response JSON
+    const data = await res.json();
+
+    // 5️⃣ Check for success or throw error
+    if (!res.ok) {
+      throw new Error(data.detail || "Invalid PIN");
+    }
+
+    console.log("✅ PIN verified:", data);
+
+    // 6️⃣ Navigate to next phase after a short delay
     setTimeout(onPinSuccess, 500);
-  };
+  } catch (err) {
+    console.error("❌ PIN verification failed:", err.message);
+
+    // Reset PIN inputs
+    setPin(["", "", "", ""]);
+    inputsRef.current[0]?.focus();
+
+    // Show error to user
+    alert("Incorrect PIN. Please try again.");
+
+    // Go back to PIN phase
+    setPhase("pin");
+  }
+};
+
+
 
   return (
     <div
-      className="relative flex flex-col bg-white overflow-hidden rounded-lg shadow-lg"
-      style={{
-        width: "800px",
-        height: "480px",
-        backgroundImage: `url(${backGroundImage})`,
-        backgroundSize: "cover",
-        backgroundPosition: "left center",
-        backgroundRepeat: "no-repeat",
-      }}
-    >
+  className="relative flex flex-col bg-white overflow-hidden rounded-none shadow-lg"
+  style={{
+    width: "100vw",   // 100% of viewport width
+    height: "100vh",  // 100% of viewport height
+    backgroundImage: `url(${backGroundImage})`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
+  }}
+>
+
       {/* 🔝 Top Navigation Bar */}
       <nav className="flex items-center justify-between px-5 h-[45px] bg-[#CD2255] text-white text-[12px] font-[Kameron]">
         <span>{time}</span>

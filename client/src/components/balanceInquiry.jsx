@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaCreditCard } from "react-icons/fa"; // Example for a card icon
+import { FaCreditCard } from "react-icons/fa";
 
 const BalanceInquiry = ({ selectedAccount, onBack, onReceipt }) => {
   const [showReceiptOption, setShowReceiptOption] = useState(false);
@@ -8,51 +8,75 @@ const BalanceInquiry = ({ selectedAccount, onBack, onReceipt }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [balance, setBalance] = useState(0);
   const [showFinalMessage, setShowFinalMessage] = useState(false);
-  const [goBackToMainTransaction, setGoBackToMainTransaction] = useState(false); // Tracks if we need to go to the main transaction screen or landing page
+  const [goBackToMainTransaction, setGoBackToMainTransaction] = useState(false);
 
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Simulate loading & fetch balance
     setTimeout(() => {
-      setBalance(Math.random() * 100000); // Simulate balance for demo purposes
+      // TODO: replace this mock with real backend balance fetch later
+      setBalance(Math.random() * 100000);
       setIsLoading(false);
-    }, 2000); // Simulate loading time of 2 seconds
+    }, 2000);
   }, []);
 
-  // Handles the transaction decision (Yes or No)
+  // Handles "Yes/No" for another transaction
   const handleTransactionDecision = (decision) => {
     setShowTransactionOption(false);
-    setShowReceiptOption(true); // Show receipt option regardless of the decision
-    if (decision) {
-      setGoBackToMainTransaction(true); // User chose 'Yes' for another transaction
-    } else {
-      setGoBackToMainTransaction(false); // User chose 'No', navigate to the landing page
-    }
+    setShowReceiptOption(true);
+    setGoBackToMainTransaction(decision);
   };
 
-  // Handles the receipt decision (Yes or No)
-  const handleReceiptDecision = (receiptDecision) => {
+  // Handles "Yes/No" for receipt printing
+  const handleReceiptDecision = async (receiptDecision) => {
     if (receiptDecision) {
-      onReceipt && onReceipt(); // If Yes, print receipt
-      window.print(); // Print the receipt
-    }
-    setShowReceiptOption(false);
-    setShowFinalMessage(true); // Show final thank you message
+      onReceipt && onReceipt(); // Optional callback
 
+      try {
+        // 🖨️ Send request to backend to print receipt
+        const response = await fetch("http://localhost:8000/print/receipt", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: selectedAccount,  // Replace with user's actual name if available
+            rfid_tag: selectedAccount,
+            balance: balance,
+          }),
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          console.log("🖨️ Receipt printed:", data);
+        } else {
+          console.error("⚠️ Printer error:", data.detail || data);
+          alert("Printer error: " + (data.detail || "Unable to print receipt"));
+        }
+      } catch (error) {
+        console.error("Printer connection failed:", error);
+        alert("Printer connection failed. Check the backend or USB printer.");
+      }
+    }
+
+    // Show final message
+    setShowReceiptOption(false);
+    setShowFinalMessage(true);
+
+    // Navigate after short delay
     setTimeout(() => {
       if (goBackToMainTransaction) {
-        onBack && onBack(); // If "Yes" to transaction, go back to main transaction screen
+        onBack && onBack();
       } else {
-        navigate("/"); // If "No", go to the landing page
+        navigate("/");
       }
-    }, 2000); // Wait for 2 seconds before navigating
+    }, 2000);
   };
 
   return (
     <div
       className="flex flex-col items-center justify-center mt-10 max-w-md w-full bg-white rounded-lg shadow-lg p-6"
       style={{
-        background: "url('/mnt/data/ecc65478-b87d-4728-83a9-a4c869dd4050.png')", // Update with your image
+        background: "url('/mnt/data/ecc65478-b87d-4728-83a9-a4c869dd4050.png')",
         backgroundSize: "cover",
         backgroundPosition: "center",
         borderRadius: "10px",
@@ -68,14 +92,14 @@ const BalanceInquiry = ({ selectedAccount, onBack, onReceipt }) => {
         <>
           <div className="text-left">
             <p className="mt-0.5 text-lg font-semibold text-[#1d3557] font-[Kameron]">
-              <FaCreditCard className="inline-block mr-2" />{" "}
-              {/* Icon added here */}
-              Account #: {selectedAccount}
+              <FaCreditCard className="inline-block mr-2" /> Account #:{" "}
+              {selectedAccount}
             </p>
             <p className="mt-4 text-2xl font-bold text-[#CD2255] font-[Kameron]">
               Current Balance: ₱{balance.toFixed(2)}
             </p>
           </div>
+
           {showTransactionOption && (
             <>
               <p className="mt-4 text-lg text-gray-700 font-[Kameron]">
