@@ -1,26 +1,36 @@
-import { useState, useEffect } from 'react';
-import WithdrawalAmount from '../components/withdrawalAmount';
-import BalanceInquiry from '../components/balanceInquiry';
-import TransactionHistory from '../components/transactionHistory';
-import backGroundImage from '../assets/atm-background-image.png';
-import masterCard from '../assets/mastercard.png';
-import visaCard from '../assets/visa.png';
-import gCash from '../assets/gcash.png';
-import atmIcon from '../assets/atm.png';
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import WithdrawalAmount from "../components/withdrawalAmount";
+import BalanceInquiry from "../components/balanceInquiry";
+import TransactionHistory from "../components/transactionHistory";
+import backGroundImage from "../assets/atm-background-image.png";
+import masterCard from "../assets/mastercard.png";
+import visaCard from "../assets/visa.png";
+import gCash from "../assets/gcash.png";
+import atmIcon from "../assets/atm.png";
 
 function ChooseTransactionPage() {
-  const [time, setTime] = useState('');
+  const [time, setTime] = useState("");
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [amount, setAmount] = useState(0);
   const [bankFee, setBankFee] = useState(0);
 
+  const { state } = useLocation();
+  const [rfidTag, setRfidTag] = useState(state?.rfidTag || null);
+
+  useEffect(() => {
+    // Example: Load RFID tag from localStorage or previous page state
+    const storedTag = localStorage.getItem("rfidTag");
+    if (storedTag) setRfidTag(storedTag);
+  }, []);
+
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
       const formatted = now.toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
+        hour: "2-digit",
+        minute: "2-digit",
         hour12: true,
       });
       setTime(formatted);
@@ -37,14 +47,19 @@ function ChooseTransactionPage() {
   };
 
   const handleBackClick = () => {
-    setSelectedTransaction(null); // Reset the selected transaction
-    setSelectedAccount(null); // Reset the selected account
-    setAmount(0); // Reset the amount
-    setBankFee(0); // Reset the bank fee
+    setSelectedTransaction(null);
+    setSelectedAccount(null);
+    setAmount(0);
+    setBankFee(0);
   };
 
+  // ✅ Updated account selection: uses RFID tag, not “Savings” or “Credit Card”
   const handleAccountSelection = (accountType) => {
-    setSelectedAccount(accountType);
+    if (!rfidTag) {
+      alert("RFID tag not found! Please verify your card first.");
+      return;
+    }
+    setSelectedAccount({ accountType, tag: rfidTag });
   };
 
   return (
@@ -52,11 +67,11 @@ function ChooseTransactionPage() {
       className="flex items-center justify-center min-h-screen bg-white relative"
       style={{
         backgroundImage: `linear-gradient(to right, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.7) 40%, rgba(255,255,255,0) 100%), url(${backGroundImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        minHeight: '100vh',
-        width: '100vw',
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        minHeight: "100vh",
+        width: "100vw",
       }}
     >
       {/* Top Navigation */}
@@ -85,55 +100,55 @@ function ChooseTransactionPage() {
 
         <h2 className="text-base sm:text-lg md:text-xl font-semibold text-gray-800 mt-1 font-[Kameron]">
           {!selectedTransaction
-            ? 'Please choose your desired transaction'
-            : selectedTransaction === 'withdrawCash' && !selectedAccount
-            ? 'Please choose your desired account for withdrawal'
-            : selectedTransaction === 'balanceInquiry' && !selectedAccount
-            ? 'Please choose your desired account for balance inquiry'
-            : selectedTransaction === 'withdrawCash' && selectedAccount
-            ? 'Please enter the withdrawal amount'
-            : selectedTransaction === 'balanceInquiry' && selectedAccount
-            ? 'Checking balance for selected account...'
-            : ''}
+            ? "Please choose your desired transaction"
+            : selectedTransaction === "withdrawCash" && !selectedAccount
+            ? "Please choose your desired account for withdrawal"
+            : selectedTransaction === "balanceInquiry" && !selectedAccount
+            ? "Please choose your desired account for balance inquiry"
+            : selectedTransaction === "withdrawCash" && selectedAccount
+            ? "Please enter the withdrawal amount"
+            : selectedTransaction === "balanceInquiry" && selectedAccount
+            ? "Checking balance for selected account..."
+            : ""}
         </h2>
 
-        {/* Main Transaction or Account Selection */}
+        {/* Transaction Selection */}
         {!selectedTransaction ? (
           <div className="flex flex-col sm:flex-row gap-5 mt-20">
             <button
               className="px-10 py-10 bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition font-[Kameron]"
-              onClick={() => handleButtonClick('balanceInquiry')}
+              onClick={() => handleButtonClick("balanceInquiry")}
               type="button"
             >
               Balance Inquiry
             </button>
             <button
               className="px-6 py-3 bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition font-[Kameron]"
-              onClick={() => handleButtonClick('withdrawCash')}
+              onClick={() => handleButtonClick("withdrawCash")}
               type="button"
             >
               Withdraw Cash
             </button>
             <button
               className="px-6 py-3 bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition font-[Kameron]"
-              onClick={() => handleButtonClick('transactionHistory')}
+              onClick={() => handleButtonClick("transactionHistory")}
               type="button"
             >
               Transaction History
             </button>
           </div>
-        ) : selectedTransaction === 'balanceInquiry' && !selectedAccount ? (
+        ) : selectedTransaction === "balanceInquiry" && !selectedAccount ? (
           <div className="flex flex-col sm:flex-row gap-5 mt-20">
             <button
               className="px-10 py-10 bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition font-[Kameron]"
-              onClick={() => handleAccountSelection('Savings')}
+              onClick={() => handleAccountSelection("Savings")}
               type="button"
             >
               Savings
             </button>
             <button
               className="px-6 py-3 bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition font-[Kameron]"
-              onClick={() => handleAccountSelection('Credit Card')}
+              onClick={() => handleAccountSelection("Credit Card")}
               type="button"
             >
               Credit Card
@@ -146,18 +161,18 @@ function ChooseTransactionPage() {
               Back
             </button>
           </div>
-        ) : selectedTransaction === 'withdrawCash' && !selectedAccount ? (
+        ) : selectedTransaction === "withdrawCash" && !selectedAccount ? (
           <div className="flex flex-col sm:flex-row gap-5 mt-20">
             <button
               className="px-10 py-10 bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition font-[Kameron]"
-              onClick={() => handleAccountSelection('Savings')}
+              onClick={() => handleAccountSelection("Savings")}
               type="button"
             >
               Savings
             </button>
             <button
               className="px-6 py-3 bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition font-[Kameron]"
-              onClick={() => handleAccountSelection('Credit Card')}
+              onClick={() => handleAccountSelection("Credit Card")}
               type="button"
             >
               Credit Card
@@ -170,22 +185,24 @@ function ChooseTransactionPage() {
               Back
             </button>
           </div>
-        ) : selectedTransaction === 'withdrawCash' && selectedAccount ? (
+        ) : selectedTransaction === "withdrawCash" && selectedAccount ? (
           <WithdrawalAmount
+            selectedAccount={selectedAccount.tag} //rfid tag
             amount={amount}
             setAmount={setAmount}
             bankFee={bankFee}
             setBankFee={setBankFee}
-            onCancel={handleBackClick} // Pass the onCancel prop to go back to the selection screen
+            onCancel={handleBackClick}
           />
-        ) : selectedTransaction === 'balanceInquiry' && selectedAccount ? (
-            <BalanceInquiry
-              selectedAccount={selectedAccount}
-              onBack={handleBackClick}
-            />
-          ) : selectedTransaction === 'transactionHistory' ? (
-            <TransactionHistory onBack={handleBackClick} />
-          ) : null}
+        ) : selectedTransaction === "balanceInquiry" && selectedAccount ? (
+          <BalanceInquiry
+            selectedAccount={selectedAccount.tag} // ✅ RFID Tag passed here
+            accountType={selectedAccount.accountType}
+            onBack={handleBackClick}
+          />
+        ) : selectedTransaction === "transactionHistory" ? (
+          <TransactionHistory onBack={handleBackClick} />
+        ) : null}
       </div>
     </div>
   );

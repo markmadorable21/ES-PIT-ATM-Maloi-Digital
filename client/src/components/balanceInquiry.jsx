@@ -9,17 +9,37 @@ const BalanceInquiry = ({ selectedAccount, onBack, onReceipt }) => {
   const [balance, setBalance] = useState(0);
   const [showFinalMessage, setShowFinalMessage] = useState(false);
   const [goBackToMainTransaction, setGoBackToMainTransaction] = useState(false);
+  const [name, setName] = useState("");
 
   const navigate = useNavigate();
 
+  // ✅ Fetch balance from backend using RFID tag
   useEffect(() => {
-    // Simulate loading & fetch balance
-    setTimeout(() => {
-      // TODO: replace this mock with real backend balance fetch later
-      setBalance(Math.random() * 100000);
-      setIsLoading(false);
-    }, 2000);
-  }, []);
+    if (!selectedAccount) return;
+
+    const fetchBalance = async () => {
+      try {
+        console.log(`Fetching balance for RFID tag: ${selectedAccount}`);
+        const response = await fetch(
+          `http://localhost:8000/balance/${selectedAccount}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch balance");
+        }
+        const data = await response.json();
+        setBalance(data.balance);
+        setName(data.name);
+        console.log("✅ Balance fetched successfully:", data.balance);
+      } catch (error) {
+        console.error("❌ Error fetching balance:", error);
+        alert("Error retrieving balance. Please try again.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchBalance();
+  }, [selectedAccount]);
 
   // Handles "Yes/No" for another transaction
   const handleTransactionDecision = (decision) => {
@@ -39,8 +59,8 @@ const BalanceInquiry = ({ selectedAccount, onBack, onReceipt }) => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            name: selectedAccount,  // Replace with user's actual name if available
             rfid_tag: selectedAccount,
+            name: name, // replace this with actual name if available
             balance: balance,
           }),
         });
@@ -54,7 +74,7 @@ const BalanceInquiry = ({ selectedAccount, onBack, onReceipt }) => {
         }
       } catch (error) {
         console.error("Printer connection failed:", error);
-        alert("Printer connection failed. Check the backend or USB printer.");
+        alert("Printer connection failed. Check backend or USB printer.");
       }
     }
 
@@ -82,14 +102,16 @@ const BalanceInquiry = ({ selectedAccount, onBack, onReceipt }) => {
         borderRadius: "10px",
       }}
     >
+      {/* 🌀 Loading State */}
       {isLoading ? (
         <div className="text-center">
           <span className="text-lg font-semibold text-gray-700 font-[Kameron]">
-            Checking balance for selected account...
+            Checking balance for your account...
           </span>
         </div>
       ) : (
         <>
+          {/* 💳 Display Account Info */}
           <div className="text-left">
             <p className="mt-0.5 text-lg font-semibold text-[#1d3557] font-[Kameron]">
               <FaCreditCard className="inline-block mr-2" /> Account #:{" "}
@@ -100,6 +122,7 @@ const BalanceInquiry = ({ selectedAccount, onBack, onReceipt }) => {
             </p>
           </div>
 
+          {/* 🔁 Transaction Decision */}
           {showTransactionOption && (
             <>
               <p className="mt-4 text-lg text-gray-700 font-[Kameron]">
@@ -124,6 +147,7 @@ const BalanceInquiry = ({ selectedAccount, onBack, onReceipt }) => {
         </>
       )}
 
+      {/* 🧾 Receipt Option */}
       {showReceiptOption && (
         <div className="text-center mt-5">
           <p className="text-lg text-gray-700 font-[Kameron]">
@@ -146,6 +170,7 @@ const BalanceInquiry = ({ selectedAccount, onBack, onReceipt }) => {
         </div>
       )}
 
+      {/* ✅ Final Message */}
       {showFinalMessage && !isLoading && (
         <div className="text-center">
           <p className="text-lg font-semibold text-gray-700 font-[Kameron]">

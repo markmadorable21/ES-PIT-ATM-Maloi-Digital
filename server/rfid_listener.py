@@ -3,9 +3,8 @@ import requests
 import time
 import RPi.GPIO as GPIO
 
-# === Configuration ===
-API_BASE = "http://127.0.0.1:8000"  # change to your Pi's IP if frontend runs remotely
-READER_DELAY = 2  # seconds to wait before next read
+API_BASE = "http://127.0.0.1:8000"  # Adjust to your Pi’s IP if remote frontend
+READER_DELAY = 2  # seconds
 
 reader = SimpleMFRC522()
 
@@ -13,6 +12,7 @@ try:
     while True:
         print("Place your card...")
         id, text = reader.read()
+        id = str(id).strip()  # sanitize RFID to avoid trailing spaces/newlines
         print(f"Detected RFID: {id}")
 
         try:

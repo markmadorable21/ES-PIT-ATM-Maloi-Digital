@@ -17,28 +17,27 @@ function LandingPage() {
   const onPinSuccess = () => navigate("/choose-transaction");
 
   useEffect(() => {
-  const interval = setInterval(async () => {
-    if (phase !== "welcome") return;
+    const interval = setInterval(async () => {
+      if (phase !== "welcome") return;
 
-    try {
-      const res = await fetch("http://localhost:8000/rfid/latest");
-      const data = await res.json();
+      try {
+        const res = await fetch("http://localhost:8000/rfid/latest");
+        const data = await res.json();
 
-      if (data.rfid_tag) {
-        console.log("Detected RFID:", data.rfid_tag);
-        setRfidTag(data.rfid_tag);
-        setPhase("pin");
-        setTimeout(() => inputsRef.current[0]?.focus(), 200);
+        if (data.rfid_tag) {
+          console.log("Detected RFID:", data.rfid_tag);
+          setRfidTag(data.rfid_tag);
+          localStorage.setItem("rfidTag", data.rfid_tag); // ? Add this line
+          setPhase("pin");
+          setTimeout(() => inputsRef.current[0]?.focus(), 200);
+        }
+      } catch (err) {
+        console.error(err);
       }
-    } catch (err) {
-      console.error(err);
-    }
-  }, 1000);
+    }, 1000);
 
-  return () => clearInterval(interval);
-}, [phase]); // <-- include phase
-
-
+    return () => clearInterval(interval);
+  }, [phase]); // <-- include phase
 
   // 🕒 live clock
   useEffect(() => {
@@ -61,7 +60,6 @@ function LandingPage() {
     setPhase("pin");
     setTimeout(() => inputsRef.current[0]?.focus(), 50);
   };
-  const simulateCardInsert = () => handleCardRecognized();
 
   // 🔢 PIN logic
   const handlePinChange = (idx, value) => {
@@ -75,77 +73,76 @@ function LandingPage() {
   const handlePinKeyDown = (idx, e) => {
     if (e.key === "Backspace" && !pin[idx] && idx > 0)
       inputsRef.current[idx - 1]?.focus();
-    if (e.key === "ArrowLeft" && idx > 0)
-      inputsRef.current[idx - 1]?.focus();
+    if (e.key === "ArrowLeft" && idx > 0) inputsRef.current[idx - 1]?.focus();
     if (e.key === "ArrowRight" && idx < inputsRef.current.length - 1)
       inputsRef.current[idx + 1]?.focus();
     if (e.key === "Enter" && isPinReady) handleSubmitPin();
   };
 
   const isPinReady = pin.every((d) => d.length === 1);
- const handleSubmitPin = async () => {
-  // 1️⃣ Ensure PIN is fully entered
-  if (!isPinReady) return;
+  const handleSubmitPin = async () => {
+    // 1️⃣ Ensure PIN is fully entered
+    if (!isPinReady) return;
 
-  // 2️⃣ Ensure RFID tag exists
-  if (!rfidTag) {
-    alert("RFID card not detected. Please insert your card.");
-    setPhase("welcome");
-    return;
-  }
-
-  setPhase("processing");
-
-  // 3️⃣ Combine PIN digits and trim any extra whitespace
-  const pinValue = pin.join("").trim();
-
-  try {
-    const res = await fetch(`http://localhost:8000/verify-pin/${rfidTag}/${pinValue}`, {
-      method: "POST",
-    });
-
-    // 4️⃣ Parse response JSON
-    const data = await res.json();
-
-    // 5️⃣ Check for success or throw error
-    if (!res.ok) {
-      throw new Error(data.detail || "Invalid PIN");
+    // 2️⃣ Ensure RFID tag exists
+    if (!rfidTag) {
+      alert("RFID card not detected. Please insert your card.");
+      setPhase("welcome");
+      return;
     }
 
-    console.log("✅ PIN verified:", data);
+    setPhase("processing");
 
-    // 6️⃣ Navigate to next phase after a short delay
-    setTimeout(onPinSuccess, 500);
-  } catch (err) {
-    console.error("❌ PIN verification failed:", err.message);
+    // 3️⃣ Combine PIN digits and trim any extra whitespace
+    const pinValue = pin.join("").trim();
 
-    // Reset PIN inputs
-    setPin(["", "", "", ""]);
-    inputsRef.current[0]?.focus();
+    try {
+      const res = await fetch(
+        `http://localhost:8000/verify-pin/${rfidTag}/${pinValue}`,
+        {
+          method: "POST",
+        }
+      );
 
-    // Show error to user
-    alert("Incorrect PIN. Please try again.");
+      // 4️⃣ Parse response JSON
+      const data = await res.json();
 
-    // Go back to PIN phase
-    setPhase("pin");
-  }
-};
+      // 5️⃣ Check for success or throw error
+      if (!res.ok) {
+        throw new Error(data.detail || "Invalid PIN");
+      }
 
+      console.log("✅ PIN verified:", data);
 
+      // 6️⃣ Navigate to next phase after a short delay
+      setTimeout(onPinSuccess, 500);
+    } catch (err) {
+      console.error("❌ PIN verification failed:", err.message);
+
+      // Reset PIN inputs
+      setPin(["", "", "", ""]);
+      inputsRef.current[0]?.focus();
+
+      // Show error to user
+      alert("Incorrect PIN. Please try again.");
+
+      // Go back to PIN phase
+      setPhase("pin");
+    }
+  };
 
   return (
     <div
-  className="relative flex flex-col bg-white overflow-hidden rounded-none shadow-lg"
-  style={{
-    width: "100vw",   // 100% of viewport width
-    height: "100vh",  // 100% of viewport height
-    backgroundImage: `url(${backGroundImage})`,
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    backgroundRepeat: "no-repeat",
-  }}
->
-
+      className="relative flex flex-col bg-white overflow-hidden rounded-none shadow-lg"
+      style={{
+        width: "100vw", // 100% of viewport width
+        height: "100vh", // 100% of viewport height
+        backgroundImage: `url(${backGroundImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
       {/* 🔝 Top Navigation Bar */}
       <nav className="flex items-center justify-between px-5 h-[45px] bg-[#CD2255] text-white text-[12px] font-[Kameron]">
         <span>{time}</span>
@@ -172,7 +169,7 @@ function LandingPage() {
         </div>
 
         {/* ✨ Tagline */}
-        <p className="text-right text-[24px] font-[Lavishly_Yours] mt-1 italic">
+        <p className="text-right text-[24px] font-[Lavishly_Yours] mt-1 italic pr-[50px]">
           All your finances, one place.
         </p>
 
@@ -183,16 +180,9 @@ function LandingPage() {
               <h2 className="ml-8 text-[28px] font-[Kameron] font-semibold">
                 Welcome, again!
               </h2>
-              <p className="ml-12 text-[18px] font-[Kameron] ">
+              <p className="ml-12 text-[20px] font-[Kameron] ">
                 Please insert your card.
               </p>
-
-              <button
-                onClick={simulateCardInsert}
-                className="mt-5 ml-12 rounded-full bg-gray-900/10 px-5 py-2 text-[13px] text-gray-700 hover:bg-gray-900/20"
-              >
-                Simulate card insert (dev)
-              </button>
             </>
           )}
 
@@ -235,7 +225,9 @@ function LandingPage() {
           )}
 
           {phase === "processing" && (
-            <p className="text-right font-[Kameron] text-[18px] mt-6">Processing…</p>
+            <p className="text-right font-[Kameron] text-[18px] mt-6">
+              Processing…
+            </p>
           )}
         </div>
       </div>

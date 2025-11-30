@@ -5,8 +5,10 @@ cursor = conn.cursor()
 
 # Add example users with PINs
 cards = [
-    ("Jomar", "49375347824", 500.0, "1234"),
-    ("User2", "983933453559", 300.0, "5678")
+    ("Jomar", "49375347824", 500.0, "1357"),
+    ("Juan", "983933453559", 300.0, "2468"),
+    {"Clarence", "325719271765", 600.0, "1289"},
+
 ]
 
 for name, tag, balance, pin in cards:
