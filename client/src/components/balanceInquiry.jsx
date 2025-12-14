@@ -94,7 +94,7 @@ const BalanceInquiry = ({ selectedAccount, onBack, onReceipt }) => {
 
   return (
     <div
-      className="flex flex-col items-center justify-center mt-10 max-w-md w-full bg-white rounded-lg shadow-lg p-6"
+      className="flex flex-col items-center justify-center max-w-md w-full rounded-lg "
       style={{
         background: "url('/mnt/data/ecc65478-b87d-4728-83a9-a4c869dd4050.png')",
         backgroundSize: "cover",
@@ -105,7 +105,7 @@ const BalanceInquiry = ({ selectedAccount, onBack, onReceipt }) => {
       {/* 🌀 Loading State */}
       {isLoading ? (
         <div className="text-center">
-          <span className="text-lg font-semibold text-gray-700 font-[Kameron]">
+          <span className="text-lg font-medium text-gray-700 font-[Kameron]">
             Checking balance for your account...
           </span>
         </div>
@@ -113,11 +113,11 @@ const BalanceInquiry = ({ selectedAccount, onBack, onReceipt }) => {
         <>
           {/* 💳 Display Account Info */}
           <div className="text-left">
-            <p className="mt-0.5 text-lg font-semibold text-[#1d3557] font-[Kameron]">
+            <p className="text-lg font-medium text-[#1d3557] font-[Kameron]">
               <FaCreditCard className="inline-block mr-2" /> Account #:{" "}
               {selectedAccount}
             </p>
-            <p className="mt-4 text-2xl font-bold text-[#CD2255] font-[Kameron]">
+            <p className=" text-2xl font-bold text-[#CD2255] font-[Kameron]">
               Current Balance: ₱{balance.toFixed(2)}
             </p>
           </div>
