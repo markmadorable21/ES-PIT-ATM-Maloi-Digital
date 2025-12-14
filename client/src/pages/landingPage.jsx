@@ -1,35 +1,35 @@
-import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import backGroundImage from '../assets/enhancedBackground.png';
-import masterCard from '../assets/mastercard.png';
-import visaCard from '../assets/visa.png';
-import gCash from '../assets/gcash.png';
-import atmIcon from '../assets/atm.png';
-import amex from '../assets/amex.jpg';
+import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import backGroundImage from "../assets/enhancedBackground.png";
+import masterCard from "../assets/mastercard.png";
+import visaCard from "../assets/visa.png";
+import gCash from "../assets/gcash.png";
+import atmIcon from "../assets/atm.png";
+import amex from "../assets/amex.jpg";
 
 function LandingPage() {
-  const [time, setTime] = useState('');
-  const [phase, setPhase] = useState('welcome');
-  const [pin, setPin] = useState(['', '', '', '']);
+  const [time, setTime] = useState("");
+  const [phase, setPhase] = useState("welcome");
+  const [pin, setPin] = useState(["", "", "", ""]);
   const inputsRef = useRef([]);
   const navigate = useNavigate();
   const [rfidTag, setRfidTag] = useState(null);
 
-  const onPinSuccess = () => navigate('/choose-transaction');
+  const onPinSuccess = () => navigate("/choose-transaction");
 
   useEffect(() => {
     const interval = setInterval(async () => {
-      if (phase !== 'welcome') return;
+      if (phase !== "welcome") return;
 
       try {
-        const res = await fetch('http://localhost:8000/rfid/latest');
+        const res = await fetch("http://localhost:8000/rfid/latest");
         const data = await res.json();
 
         if (data.rfid_tag) {
-          console.log('Detected RFID:', data.rfid_tag);
+          console.log("Detected RFID:", data.rfid_tag);
           setRfidTag(data.rfid_tag);
-          localStorage.setItem('rfidTag', data.rfid_tag); // ? Add this line
-          setPhase('pin');
+          localStorage.setItem("rfidTag", data.rfid_tag); // ? Add this line
+          setPhase("pin");
           setTimeout(() => inputsRef.current[0]?.focus(), 200);
         }
       } catch (err) {
@@ -45,8 +45,8 @@ function LandingPage() {
     const updateTime = () => {
       const now = new Date();
       const formatted = now.toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
+        hour: "2-digit",
+        minute: "2-digit",
         hour12: true,
       });
       setTime(formatted);
@@ -58,13 +58,13 @@ function LandingPage() {
 
   // 💳 card simulation
   const handleCardRecognized = () => {
-    setPhase('pin');
+    setPhase("pin");
     setTimeout(() => inputsRef.current[0]?.focus(), 50);
   };
 
   // 🔢 PIN logic
   const handlePinChange = (idx, value) => {
-    const v = value.replace(/\D/g, '').slice(0, 1);
+    const v = value.replace(/\D/g, "").slice(0, 1);
     const next = [...pin];
     next[idx] = v;
     setPin(next);
@@ -72,12 +72,12 @@ function LandingPage() {
       inputsRef.current[idx + 1]?.focus();
   };
   const handlePinKeyDown = (idx, e) => {
-    if (e.key === 'Backspace' && !pin[idx] && idx > 0)
+    if (e.key === "Backspace" && !pin[idx] && idx > 0)
       inputsRef.current[idx - 1]?.focus();
-    if (e.key === 'ArrowLeft' && idx > 0) inputsRef.current[idx - 1]?.focus();
-    if (e.key === 'ArrowRight' && idx < inputsRef.current.length - 1)
+    if (e.key === "ArrowLeft" && idx > 0) inputsRef.current[idx - 1]?.focus();
+    if (e.key === "ArrowRight" && idx < inputsRef.current.length - 1)
       inputsRef.current[idx + 1]?.focus();
-    if (e.key === 'Enter' && isPinReady) handleSubmitPin();
+    if (e.key === "Enter" && isPinReady) handleSubmitPin();
   };
 
   const isPinReady = pin.every((d) => d.length === 1);
@@ -87,21 +87,21 @@ function LandingPage() {
 
     // 2️⃣ Ensure RFID tag exists
     if (!rfidTag) {
-      alert('RFID card not detected. Please insert your card.');
-      setPhase('welcome');
+      alert("RFID card not detected. Please insert your card.");
+      setPhase("welcome");
       return;
     }
 
-    setPhase('processing');
+    setPhase("processing");
 
     // 3️⃣ Combine PIN digits and trim any extra whitespace
-    const pinValue = pin.join('').trim();
+    const pinValue = pin.join("").trim();
 
     try {
       const res = await fetch(
         `http://localhost:8000/verify-pin/${rfidTag}/${pinValue}`,
         {
-          method: 'POST',
+          method: "POST",
         }
       );
 
@@ -110,25 +110,25 @@ function LandingPage() {
 
       // 5️⃣ Check for success or throw error
       if (!res.ok) {
-        throw new Error(data.detail || 'Invalid PIN');
+        throw new Error(data.detail || "Invalid PIN");
       }
 
-      console.log('✅ PIN verified:', data);
+      console.log("✅ PIN verified:", data);
 
       // 6️⃣ Navigate to next phase after a short delay
       setTimeout(onPinSuccess, 500);
     } catch (err) {
-      console.error('❌ PIN verification failed:', err.message);
+      console.error("❌ PIN verification failed:", err.message);
 
       // Reset PIN inputs
-      setPin(['', '', '', '']);
+      setPin(["", "", "", ""]);
       inputsRef.current[0]?.focus();
 
       // Show error to user
-      alert('Incorrect PIN. Please try again.');
+      alert("Incorrect PIN. Please try again.");
 
       // Go back to PIN phase
-      setPhase('pin');
+      setPhase("pin");
     }
   };
 
@@ -136,8 +136,8 @@ function LandingPage() {
     <div
       className="relative flex flex-col bg-white overflow-hidden rounded-none shadow-lg"
       style={{
-        width: '100vw', // 100% of viewport width
-        height: '100vh', // 100% of viewport height
+        width: "100vw", // 100% of viewport width
+        height: "100vh", // 100% of viewport height
         backgroundImage: `
       linear-gradient(to left, 
       rgba(255, 255, 255, 0.8) 0%,
@@ -149,9 +149,9 @@ function LandingPage() {
       ),
       url(${backGroundImage})
     `,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
       }}
     >
       {/* 🔝 Top Navigation Bar */}
@@ -193,7 +193,7 @@ function LandingPage() {
 
         {/* 🔄 Dynamic Section */}
         <div className="mt-8">
-          {phase === 'welcome' && (
+          {phase === "welcome" && (
             <>
               <h2 className="ml-8 text-[28px] font-[Kameron] font-medium">
                 Welcome, again!
@@ -204,13 +204,13 @@ function LandingPage() {
             </>
           )}
 
-          {phase === 'pin' && (
-            <div className="mt-4">
-              <p className="ml-12 font-[Kameron] text-[16px] mb-3">
+          {phase === "pin" && (
+            <div className="mt-4 ">
+              <p className="ml-8 font-[Kameron] text-[14px] mb-3 pl-5">
                 Please enter your Personal Identification Number (PIN)
               </p>
 
-              <div className="ml-12 flex gap-3">
+              <div className="ml-12 flex gap-3 justify-center">
                 {pin.map((digit, i) => (
                   <input
                     key={i}
@@ -231,10 +231,10 @@ function LandingPage() {
               <button
                 onClick={handleSubmitPin}
                 disabled={!isPinReady}
-                className={`mt-5 ml-16 w-40 rounded-full px-4 py-2 text-[14px] font-semibold text-white shadow-md ${
+                className={`mt-5 ml-16 w-40 rounded-full font-[Kameron] px-4 py-2 text-[14px] font-semibold text-white shadow-md ${
                   isPinReady
-                    ? 'bg-[#CD2255] hover:brightness-110'
-                    : 'bg-[#CD2255]/60 cursor-not-allowed'
+                    ? "bg-[#CD2255] hover:brightness-110"
+                    : "bg-[#CD2255]/60 cursor-not-allowed"
                 }`}
               >
                 Enter
@@ -242,8 +242,8 @@ function LandingPage() {
             </div>
           )}
 
-          {phase === 'processing' && (
-            <p className="text-right font-[Kameron] text-[18px] mt-6">
+          {phase === "processing" && (
+            <p className="text-right font-[Kameron] text-[18px] mt-6 pr-5">
               Processing…
             </p>
           )}
