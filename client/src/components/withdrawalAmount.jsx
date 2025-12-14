@@ -164,6 +164,7 @@ const WithdrawalAmount = ({
         <span className="text-lg font-semibold font-[Kameron]">
           Would you like a printed receipt?
         </span>
+        D Card
         <div className="flex gap-4">
           <button
             className="bg-[#CD2255] hover:bg-[#a81b44] text-white px-6 py-2 rounded-lg font-semibold transition font-[Kameron]"
@@ -197,11 +198,11 @@ const WithdrawalAmount = ({
 
   // 🏦 Main Input UI
   return (
-    <div className="flex flex-col gap-4 mt-5 max-w-md w-full bg-white rounded-lg shadow-lg p-6">
-      <div className="text-center mb-3">
-        <p className="text-lg font-[Kameron] text-gray-700 font-semibold">
+    <div className="flex flex-col gap-4 max-w-md w-full rounded-lg">
+      <div className="text-center">
+        <p className="text-lg font-[Kameron] text-gray-700 font-medium">
           Available Balance:
-          <span className="text-[#CD2255] ml-2 font-bold">
+          <span className="text-[#CD2255] ml-2 font-normal">
             ₱{balance.toFixed(2)}
           </span>
         </p>
@@ -215,24 +216,26 @@ const WithdrawalAmount = ({
           min={0}
           onChange={handleInputChange}
           placeholder="Enter Amount"
-          className="p-3 px-20 border-2 border-[#CD2255] rounded-lg w-80 text-center text-xl font-semibold focus:outline-none focus:ring-2 focus:ring-[#CD2255] transition"
+          className="  border-2 border-[#CD2255] rounded-lg w-60 text-center text-xl font-semibold focus:outline-none focus:ring-2 focus:ring-[#CD2255] transition"
         />
       </div>
 
       {error && (
-        <div className="text-red-500 text-center font-medium">{error}</div>
+        <div className="text-red-500 text-center font-medium text-[12px]">
+          {error}
+        </div>
       )}
 
       <div className="flex flex-wrap gap-4 justify-center">
         {[100, 500, 1000].map((step) => (
           <div
             key={step}
-            className="flex items-center gap-2 bg-gray-100 rounded-lg px-3 py-2 shadow-sm"
+            className="flex items-center p-2 gap-2 bg-gray-50 rounded-lg shadow-sm"
           >
             <button
               aria-label={`Decrease by ${step}`}
               onClick={() => handleAmountChange(-step)}
-              className="bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-full w-8 h-8 flex items-center justify-center text-lg font-bold transition"
+              className="bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-full w-8 h-8 flex items-center justify-center text-lg font-medium transition"
               type="button"
             >
               –
@@ -241,7 +244,7 @@ const WithdrawalAmount = ({
             <button
               aria-label={`Increase by ${step}`}
               onClick={() => handleAmountChange(step)}
-              className="bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-full w-8 h-8 flex items-center justify-center text-lg font-bold transition"
+              className="bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-full w-8 h-8 flex items-center justify-center text-lg font-medium transition"
               type="button"
             >
               +
@@ -250,20 +253,20 @@ const WithdrawalAmount = ({
         ))}
       </div>
 
-      <div className="mt-3 text-gray-600 text-center">
+      <div className="text-gray-600 text-center">
         <p>
           <span className="font-medium font-[Kameron]">Bank fee:</span>{" "}
-          <span className="font-semibold text-[#CD2255]">
+          <span className="font-semibold text-[rgb(12,0,4)]">
             ₱{bankFee.toFixed(2)}
           </span>
         </p>
       </div>
 
-      <div className="flex gap-4 justify-center mt-4">
+      <div className="flex gap-4 justify-center">
         <button
           type="button"
           onClick={handleConfirm}
-          className="bg-[#CD2255] hover:bg-[#a81b44] text-white px-6 py-2 rounded-lg font-semibold transition font-[Kameron]"
+          className="bg-[#CD2255] hover:bg-[#a81b44] text-white px-8 py-3 rounded-lg font-semibold transition font-[Kameron]"
           disabled={!isValidAmount(amount)}
         >
           Confirm
@@ -271,14 +274,14 @@ const WithdrawalAmount = ({
         <button
           type="button"
           onClick={handleCancel}
-          className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-6 py-2 rounded-lg font-semibold transition font-[Kameron]"
+          className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-6 py-3 rounded-lg font-semibold transition font-[Kameron]"
         >
           Cancel
         </button>
       </div>
 
       {message && (
-        <div className="text-center text-gray-600 mt-3 font-[Kameron]">
+        <div className="text-center text-gray-600 font-[Kameron]">
           {message}
         </div>
       )}

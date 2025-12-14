@@ -107,7 +107,7 @@ function ChooseTransactionPage() {
           All your finances, one place.
         </p>
 
-        <h2 className="ml-15 font-[Kameron] text-[18px] mb-3 pl-5 mt-5 text-center w-[300px]">
+        <h2 className="ml-15 font-[Kameron] text-[18px] pl-5 mt-5 text-center w-[300px]">
           {!selectedTransaction
             ? "Please choose your desired transaction"
             : selectedTransaction === "withdrawCash" && !selectedAccount
@@ -115,7 +115,7 @@ function ChooseTransactionPage() {
             : selectedTransaction === "balanceInquiry" && !selectedAccount
             ? "Please choose your desired account for balance inquiry"
             : selectedTransaction === "withdrawCash" && selectedAccount
-            ? "Please enter the withdrawal amount"
+            ? ""
             : selectedTransaction === "balanceInquiry" && selectedAccount
             ? "Checking balance for selected account..."
             : ""}
@@ -160,7 +160,7 @@ function ChooseTransactionPage() {
               onClick={() => handleAccountSelection("Credit Card")}
               type="button"
             >
-              Credit Card
+              Debit Card
             </button>
             <button
               onClick={handleBackClick}
@@ -184,7 +184,7 @@ function ChooseTransactionPage() {
               onClick={() => handleAccountSelection("Credit Card")}
               type="button"
             >
-              Credit Card
+              Dedit Card
             </button>
             <button
               onClick={handleBackClick}
