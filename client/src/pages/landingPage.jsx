@@ -6,6 +6,7 @@ import visaCard from "../assets/visa.png";
 import gCash from "../assets/gcash.png";
 import atmIcon from "../assets/atm.png";
 import amex from "../assets/amex.jpg";
+import { useKeypad } from "../hooks.jsx/useKeypad";
 
 function LandingPage() {
   const [time, setTime] = useState("");
@@ -16,6 +17,55 @@ function LandingPage() {
   const [rfidTag, setRfidTag] = useState(null);
 
   const onPinSuccess = () => navigate("/choose-transaction");
+  const handleKeypadInput = (key) => {
+    if (phase !== "pin") return;
+
+    if (key === "A") {
+      // ? ENTER (Green Circle)
+      handleSubmitPin();
+    } else if (key === "B") {
+      // ?? CLEAR / CORRECTION (Yellow Arrow) -> Acts as BACKSPACE
+      // Finds the last filled slot and clears it
+      setPin((prevPin) => {
+        // Find the index of the last number entered
+        const lastIndex = prevPin.map((p) => p !== "").lastIndexOf(true);
+        if (lastIndex !== -1) {
+          const newPin = [...prevPin];
+          newPin[lastIndex] = ""; // Clear that slot
+
+          // Move focus back to the previous input
+          inputsRef.current[lastIndex]?.focus();
+          return newPin;
+        }
+        return prevPin;
+      });
+    } else if (key === "C") {
+      // ?? RESET FIELD (Optional - keeps your existing logic)
+      setPin(["", "", "", ""]);
+      inputsRef.current[0]?.focus();
+    } else if (key === "D") {
+      // ? CANCEL (Red X) -> Abort Transaction
+      alert("Transaction Cancelled");
+      setPin(["", "", "", ""]);
+      setPhase("welcome"); // Go back to "Insert Card" screen
+    } else if (
+      ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"].includes(key)
+    ) {
+      // ?? NUMBERS
+      setPin((prevPin) => {
+        const firstEmptyIndex = prevPin.findIndex((p) => p === "");
+        if (firstEmptyIndex !== -1) {
+          const newPin = [...prevPin];
+          newPin[firstEmptyIndex] = key;
+          if (firstEmptyIndex < 3) {
+            inputsRef.current[firstEmptyIndex + 1]?.focus();
+          }
+          return newPin;
+        }
+        return prevPin;
+      });
+    }
+  };
 
   useEffect(() => {
     const interval = setInterval(async () => {
@@ -131,6 +181,8 @@ function LandingPage() {
       setPhase("pin");
     }
   };
+
+  useKeypad(handleKeypadInput, phase === "pin");
 
   return (
     <div

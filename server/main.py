@@ -1,15 +1,17 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 from database import init_db, get_connection
 from printer_utils import print_balance_receipt
-
+from keypad_driver import Keypad  # Ensure keypad_driver.py is in the same folder
+import threading
+import asyncio
 
 app = FastAPI()
 
 # -------------------- CORS CONFIG --------------------
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # For local testing; restrict later for production
+    allow_origins=["*"],  
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -21,6 +23,74 @@ init_db()
 # -------------------- GLOBAL STATE --------------------
 inserted_card = None  # None = no card inserted
 
+class KeypadManager:
+    def __init__(self):
+        self.kp = Keypad()
+        self.active_connections: list[WebSocket] = []
+        self.running = False
+        self.loop = None  # Will hold the main event loop
+
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections.append(websocket)
+        print("Client connected to Keypad WebSocket")
+
+    def disconnect(self, websocket: WebSocket):
+        if websocket in self.active_connections:
+            self.active_connections.remove(websocket)
+            print("Client disconnected from Keypad WebSocket")
+
+    async def broadcast_key(self, key: str):
+        # Send the key to all connected frontends
+        # We iterate over a copy to avoid modification issues during iteration
+        for connection in self.active_connections[:]:
+            try:
+                await connection.send_text(key)
+            except Exception as e:
+                print(f"Error sending to socket: {e}")
+                self.disconnect(connection)
+
+    def start_scanning(self, loop):
+        """Runs in a background thread to continuously check hardware"""
+        self.running = True
+        print("--- Keypad Scanning Started ---")
+        while self.running:
+            # This blocks until a key is pressed or returns None
+            key = self.kp.read_key()
+            if key:
+                print(f"Physical Key Pressed: {key}")
+                # Schedule the async broadcast on the main event loop
+                if loop and loop.is_running():
+                    asyncio.run_coroutine_threadsafe(self.broadcast_key(key), loop)
+            # Small sleep is handled inside read_key usually, but adding one here is safe
+            # time.sleep(0.01) 
+
+keypad_manager = KeypadManager()
+
+@app.on_event("startup")
+def startup_event():
+    # Get the main loop so the thread can talk back to it
+    loop = asyncio.get_event_loop()
+    keypad_manager.loop = loop
+    
+    # Start the keypad scanner in a separate thread
+    threading.Thread(target=keypad_manager.start_scanning, args=(loop,), daemon=True).start()
+
+@app.on_event("shutdown")
+def shutdown_event():
+    keypad_manager.running = False
+    keypad_manager.kp.cleanup()
+    
+# -------------------- WEBSOCKET ENDPOINT --------------------
+@app.websocket("/ws/keypad")
+async def websocket_endpoint(websocket: WebSocket):
+    await keypad_manager.connect(websocket)
+    try:
+        while True:
+            # Keep connection alive
+            await websocket.receive_text()
+    except Exception:
+        keypad_manager.disconnect(websocket)
 
 # -------------------- ROOT --------------------
 @app.get("/")
