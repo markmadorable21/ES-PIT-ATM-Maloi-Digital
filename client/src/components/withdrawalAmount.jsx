@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from "react";
 import LoadingGif from "../assets/loading.gif";
 import { useNavigate } from "react-router-dom";
+import { useKeypad } from "../hooks.jsx/useKeypad";
 
 const WithdrawalAmount = ({
-  selectedAccount, // RFID tag from ChooseTransactionPage
+  selectedAccount,
   amount,
   setAmount,
   bankFee,
   setBankFee,
   onCancel,
 }) => {
-  const [step, setStep] = useState("input"); // input, loading, receipt, done
+  const [step, setStep] = useState("input");
   const [receipt, setReceipt] = useState(null);
   const [error, setError] = useState("");
   const [balance, setBalance] = useState(0);
@@ -18,6 +19,69 @@ const WithdrawalAmount = ({
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
+  const handleKeypadInput = (key) => {
+    // ?? ONLY LISTEN IF NOT LOADING
+    if (step === "loading" || step === "done") return;
+
+    // --- SCENARIO A: INPUTTING AMOUNT ---
+    if (step === "input") {
+      if (key === "A") {
+        // ? ENTER -> Confirm
+        handleConfirm();
+      } else if (key === "D") {
+        // ? CANCEL -> Cancel Transaction
+        handleCancel();
+      } else if (key === "C") {
+        // ?? CLEAR -> Reset to 0
+        updateAmount(0);
+      } else if (key === "B") {
+        // ?? BACKSPACE -> Remove last digit
+        // Math: Divide by 10 and remove decimal (e.g., 123 -> 12)
+        const newAmount = Math.floor(amount / 10);
+        updateAmount(newAmount);
+      } else if (
+        ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"].includes(key)
+      ) {
+        // ?? NUMBER -> Append digit
+        // Math: Shift left and add (e.g., 12 -> 120 + 5 = 125)
+        const digit = Number(key);
+        // Prevent overflow or crazy numbers if needed
+        if (amount < 1000000) {
+          const newAmount = amount * 10 + digit;
+          updateAmount(newAmount);
+        }
+      }
+    }
+
+    // --- SCENARIO B: RECEIPT SCREEN ---
+    else if (step === "receipt") {
+      if (key === "A") {
+        // YES (Print Receipt)
+        handleReceipt(true);
+      } else if (key === "D" || key === "C") {
+        // NO (Skip Receipt)
+        handleReceipt(false);
+      }
+    }
+  };
+
+  // Enable keypad only when in 'input' or 'receipt' steps
+  useKeypad(handleKeypadInput, step === "input" || step === "receipt");
+
+  // --- HELPER: Update Amount & Fee Together ---
+  const updateAmount = (newVal) => {
+    setAmount(newVal);
+    setBankFee(newVal * 0.02);
+
+    // Real-time Validation
+    if (newVal > 0 && newVal % 100 === 0) {
+      setError("");
+    } else if (newVal === 0) {
+      setError("");
+    } else {
+      setError("Amount must be a multiple of 100.");
+    }
+  };
   // ✅ Fetch balance from backend using RFID tag
   useEffect(() => {
     if (!selectedAccount) return;
