@@ -32,5 +32,7 @@ def init_db():
         )
     ''')
 
+    #pucha
+
     conn.commit()
     conn.close()
