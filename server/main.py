@@ -190,7 +190,7 @@ def withdraw(tag_id: str, amount: float):
         conn.close()
         raise HTTPException(status_code=400, detail="Insufficient balance")
 
-    new_balance = balance - amount - 18.0
+    new_balance = balance - amount
     cursor.execute("UPDATE users SET balance = ? WHERE id = ?", (new_balance, user_id))
     cursor.execute(
         "INSERT INTO transactions (user_id, type, amount) VALUES (?, ?, ?)",
