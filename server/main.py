@@ -268,43 +268,90 @@ def get_balance(tag_id: str):
 @app.get("/transactions/{tag_id}")
 def get_transactions(tag_id: str):
     """Fetch transaction history for a specific user."""
-    conn = get_connection()
-    cursor = conn.cursor()
+    print(f"📥 GET /transactions/{tag_id} called")
     
-    # 1. Get the user_id from the RFID tag
-    cursor.execute("SELECT id FROM users WHERE rfid_tag = ?", (tag_id,))
-    user = cursor.fetchone()
-    
-    if not user:
-        conn.close()
-        raise HTTPException(status_code=404, detail="User not found")
-    
-    user_id = user[0]
-
-    # 2. Fetch the last 10 transactions for this user
-    # We order by timestamp DESC so the newest ones show up first
-    cursor.execute("""
-        SELECT type, amount, timestamp 
-        FROM transactions 
-        WHERE user_id = ? 
-        ORDER BY timestamp DESC 
-        LIMIT 10
-    """, (user_id,))
-    
-    rows = cursor.fetchall()
-    conn.close()
-
-    # 3. Format the data into a list of dictionaries (JSON)
-    history = []
-    for row in rows:
-        history.append({
-            "type": row[0],
-            "amount": row[1],
-            "timestamp": row[2]
-        })
+    conn = None
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
         
-    print(f"?? Sending history for {tag_id}: {len(history)} records")
-    return history
+        # DEBUG: Check if the table exists
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='transactions'")
+        table_exists = cursor.fetchone()
+        if not table_exists:
+            print(f"❌ ERROR: 'transactions' table does not exist in database!")
+            raise HTTPException(status_code=500, detail="Transactions table not found in database")
+        
+        # DEBUG: List all tables
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
+        tables = cursor.fetchall()
+        print(f"📋 Available tables: {tables}")
+        
+        # 1. Get the user_id from the RFID tag
+        print(f"🔍 Looking up user with RFID tag: '{tag_id}'")
+        cursor.execute("SELECT id, name FROM users WHERE rfid_tag = ?", (tag_id,))
+        user = cursor.fetchone()
+        
+        if not user:
+            print(f"❌ User with RFID tag '{tag_id}' not found in users table")
+            conn.close()
+            raise HTTPException(status_code=404, detail=f"User with RFID {tag_id} not found")
+        
+        user_id, user_name = user
+        print(f"✅ Found user: ID={user_id}, Name={user_name}")
+        
+        # DEBUG: Check transactions table structure
+        cursor.execute("PRAGMA table_info(transactions)")
+        columns = cursor.fetchall()
+        print(f"📊 Transactions table columns: {columns}")
+        
+        # DEBUG: Check if there are any transactions for this user
+        cursor.execute("SELECT COUNT(*) FROM transactions WHERE user_id = ?", (user_id,))
+        count = cursor.fetchone()[0]
+        print(f"📈 Total transactions for user_id {user_id}: {count}")
+        
+        # 2. Fetch the last 10 transactions for this user
+        print(f"📋 Fetching transactions for user_id: {user_id}")
+        cursor.execute("""
+            SELECT id, type, amount, timestamp, user_id 
+            FROM transactions 
+            WHERE user_id = ? 
+            ORDER BY timestamp DESC 
+            LIMIT 10
+        """, (user_id,))
+        
+        rows = cursor.fetchall()
+        
+        # DEBUG: Print raw rows
+        print(f"📄 Raw transaction rows ({len(rows)}):")
+        for i, row in enumerate(rows):
+            print(f"  [{i}] id={row[0]}, type={row[1]}, amount={row[2]}, timestamp={row[3]}, user_id={row[4]}")
+        
+        # 3. Format the data into a list of dictionaries (JSON)
+        history = []
+        for row in rows:
+            history.append({
+                "id": row[0],
+                "type": row[1],
+                "amount": float(row[2]) if row[2] is not None else 0.0,
+                "timestamp": row[3],
+                "user_id": row[4]
+            })
+        
+        print(f"✅ Sending history for {tag_id} ({user_name}): {len(history)} records")
+        return history
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"❌ ERROR in get_transactions: {str(e)}")
+        print(f"📝 Error type: {type(e)}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+    finally:
+        if conn:
+            conn.close()
 
 # -------------------- DEBUG: VIEW ALL USERS --------------------
 @app.get("/users")
