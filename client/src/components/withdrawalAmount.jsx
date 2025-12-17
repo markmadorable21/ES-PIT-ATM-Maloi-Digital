@@ -71,7 +71,7 @@ const WithdrawalAmount = ({
   // --- HELPER: Update Amount & Fee Together ---
   const updateAmount = (newVal) => {
     setAmount(newVal);
-    setBankFee(newVal - 18);
+    setBankFee(18);
 
     // Real-time Validation
     if (newVal > 0 && newVal % 100 === 0) {
@@ -115,7 +115,7 @@ const WithdrawalAmount = ({
   const handleInputChange = (e) => {
     const val = Number(e.target.value);
     setAmount(val < 0 ? 0 : val);
-    setBankFee((val < 0 ? 0 : val) - 18);
+    setBankFee(18);
 
     if (!isValidAmount(val)) {
       setError('Amount must be a multiple of 100, 500, or 1000.');
@@ -127,7 +127,7 @@ const WithdrawalAmount = ({
   const handleAmountChange = (value) => {
     setAmount((prevAmount) => {
       const newAmount = prevAmount + value;
-      setBankFee((newAmount < 0 ? 0 : newAmount) - 18);
+      setBankFee(18);
 
       if (!isValidAmount(newAmount)) {
         setError('Amount must be a multiple of 100, 500, or 1000.');
