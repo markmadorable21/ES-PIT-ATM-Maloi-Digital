@@ -54,13 +54,18 @@ function ChooseTransactionPage() {
     setBankFee(0);
   };
 
-  // ✅ Updated account selection: uses RFID tag, not “Savings” or “Credit Card”
+  // ✅ Updated account selection: uses RFID tag, not "Savings" or "Credit Card"
   const handleAccountSelection = (accountType) => {
     if (!rfidTag) {
       alert("RFID tag not found! Please verify your card first.");
       return;
     }
     setSelectedAccount({ accountType, tag: rfidTag });
+  };
+
+  // ✅ Add a safe way to get the tag
+  const getAccountTag = () => {
+    return selectedAccount?.tag || rfidTag || "";
   };
 
   return (
@@ -114,10 +119,14 @@ function ChooseTransactionPage() {
             ? "Please choose your desired account for withdrawal"
             : selectedTransaction === "balanceInquiry" && !selectedAccount
             ? "Please choose your desired account for balance inquiry"
+            : selectedTransaction === "transactionHistory" && !selectedAccount
+            ? "Please choose your desired account for transaction history"
             : selectedTransaction === "withdrawCash" && selectedAccount
             ? ""
             : selectedTransaction === "balanceInquiry" && selectedAccount
             ? "Checking balance for selected account..."
+            : selectedTransaction === "transactionHistory" && selectedAccount
+            ? "Loading transaction history..."
             : ""}
         </h2>
 
@@ -184,7 +193,31 @@ function ChooseTransactionPage() {
               onClick={() => handleAccountSelection("Credit Card")}
               type="button"
             >
-              Dedit Card
+              Debit Card
+            </button>
+            <button
+              onClick={handleBackClick}
+              className="p-4 h-[120px] w-[130px] bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-semibold text-lg shadow transition font-[Kameron]"
+              type="button"
+            >
+              Back
+            </button>
+          </div>
+        ) : selectedTransaction === "transactionHistory" && !selectedAccount ? (
+          <div className="flex flex-col sm:flex-row gap-5 mt-8">
+            <button
+              className="p-4 h-[120px] w-[130px] bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition font-[Kameron]"
+              onClick={() => handleAccountSelection("Savings")}
+              type="button"
+            >
+              Savings
+            </button>
+            <button
+              className="p-4 h-[120px] w-[130px] bg-[#CD2255] hover:bg-[#a81b44] text-white rounded-lg font-semibold text-lg shadow transition font-[Kameron]"
+              onClick={() => handleAccountSelection("Credit Card")}
+              type="button"
+            >
+              Debit Card
             </button>
             <button
               onClick={handleBackClick}
@@ -196,7 +229,7 @@ function ChooseTransactionPage() {
           </div>
         ) : selectedTransaction === "withdrawCash" && selectedAccount ? (
           <WithdrawalAmount
-            selectedAccount={selectedAccount.tag} //rfid tag
+            selectedAccount={getAccountTag()} // ✅ Safe access
             amount={amount}
             setAmount={setAmount}
             bankFee={bankFee}
@@ -205,14 +238,15 @@ function ChooseTransactionPage() {
           />
         ) : selectedTransaction === "balanceInquiry" && selectedAccount ? (
           <BalanceInquiry
-            selectedAccount={selectedAccount.tag} // ✅ RFID Tag passed here
+            selectedAccount={getAccountTag()} // ✅ Safe access
             accountType={selectedAccount.accountType}
             onBack={handleBackClick}
           />
-        ) : selectedTransaction === "transactionHistory" ? (
+        ) : selectedTransaction === "transactionHistory" && selectedAccount ? (
           <TransactionHistory
             onBack={handleBackClick}
-            selectedAccount={selectedAccount.tag}
+            selectedAccount={getAccountTag()} // ✅ Safe access
+            accountType={selectedAccount.accountType} // Optional: pass account type if needed
           />
         ) : null}
       </div>
