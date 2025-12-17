@@ -186,23 +186,37 @@ def withdraw(tag_id: str, amount: float):
         raise HTTPException(status_code=404, detail="User not found")
 
     user_id, balance = user
-    if balance < amount:
+    fee = 18.0  # ⬅️ Define the fee
+    total_deduction = amount + fee  # ⬅️ Calculate total to deduct
+    
+    if balance < total_deduction:  # ⬅️ Check if balance covers amount + fee
         conn.close()
-        raise HTTPException(status_code=400, detail="Insufficient balance")
+        raise HTTPException(status_code=400, detail="Insufficient balance (including fee)")
 
-    new_balance = balance - amount
+    new_balance = balance - total_deduction  # ⬅️ Subtract amount + fee
     cursor.execute("UPDATE users SET balance = ? WHERE id = ?", (new_balance, user_id))
+    
+    # Record both withdrawal and fee in transactions (optional but good for tracking)
     cursor.execute(
         "INSERT INTO transactions (user_id, type, amount) VALUES (?, ?, ?)",
         (user_id, "withdraw", amount)
+    )
+    cursor.execute(
+        "INSERT INTO transactions (user_id, type, amount) VALUES (?, ?, ?)",
+        (user_id, "fee", fee)  # ⬅️ Record fee separately
     )
 
     conn.commit()
     conn.close()
 
-    print(f"💸 Withdrawn {amount} from {tag_id}. New balance: {new_balance}")
-    return {"rfid_tag": tag_id, "new_balance": new_balance, "status": "Withdrawal successful"}
-
+    print(f"💸 Withdrawn {amount} + fee {fee} from {tag_id}. New balance: {new_balance}")
+    return {
+        "rfid_tag": tag_id, 
+        "new_balance": new_balance, 
+        "status": "Withdrawal successful",
+        "fee": fee,  # ⬅️ Return fee in response
+        "amount_withdrawn": amount
+    }
 
 # -------------------- DEPOSIT --------------------
 @app.post("/deposit/{tag_id}/{amount}")
