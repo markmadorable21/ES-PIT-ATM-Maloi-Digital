@@ -250,6 +250,47 @@ def get_balance(tag_id: str):
     print(f"📊 Balance check for {tag_id}: {balance}")
     return {"rfid_tag": tag_id, "balance": balance}
 
+# -------------------- TRANSACTION HISTORY --------------------
+@app.get("/transactions/{tag_id}")
+def get_transactions(tag_id: str):
+    """Fetch transaction history for a specific user."""
+    conn = get_connection()
+    cursor = conn.cursor()
+    
+    # 1. Get the user_id from the RFID tag
+    cursor.execute("SELECT id FROM users WHERE rfid_tag = ?", (tag_id,))
+    user = cursor.fetchone()
+    
+    if not user:
+        conn.close()
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    user_id = user[0]
+
+    # 2. Fetch the last 10 transactions for this user
+    # We order by timestamp DESC so the newest ones show up first
+    cursor.execute("""
+        SELECT type, amount, timestamp 
+        FROM transactions 
+        WHERE user_id = ? 
+        ORDER BY timestamp DESC 
+        LIMIT 10
+    """, (user_id,))
+    
+    rows = cursor.fetchall()
+    conn.close()
+
+    # 3. Format the data into a list of dictionaries (JSON)
+    history = []
+    for row in rows:
+        history.append({
+            "type": row[0],
+            "amount": row[1],
+            "timestamp": row[2]
+        })
+        
+    print(f"?? Sending history for {tag_id}: {len(history)} records")
+    return history
 
 # -------------------- DEBUG: VIEW ALL USERS --------------------
 @app.get("/users")

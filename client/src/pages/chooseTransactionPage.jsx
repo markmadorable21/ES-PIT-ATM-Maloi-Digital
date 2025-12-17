@@ -210,7 +210,10 @@ function ChooseTransactionPage() {
             onBack={handleBackClick}
           />
         ) : selectedTransaction === "transactionHistory" ? (
-          <TransactionHistory onBack={handleBackClick} />
+          <TransactionHistory
+            onBack={handleBackClick}
+            selectedAccount={selectedAccount.tag}
+          />
         ) : null}
       </div>
     </div>
