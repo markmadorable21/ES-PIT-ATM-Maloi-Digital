@@ -1,0 +1,49 @@
+[MASTER]
+# Ignore test files and migrations
+ignore = test_,migrations,__pycache__,venv
+
+# Load extensions for better analysis
+load-plugins = pylint.extensions.mccabe
+
+[MESSAGES CONTROL]
+# Disable less important warnings for now
+disable =
+    missing-docstring,
+    too-few-public-methods,
+    broad-except,
+    redefined-outer-name
+
+# Enable complexity checks
+enable = complexity,design
+
+[DESIGN]
+# Strict limits for ATM system (financial code)
+max-args = 5          # Max function arguments
+max-locals = 10       # Max local variables
+max-returns = 4       # Max return statements
+max-branches = 8      # Max branches (if/else)
+max-statements = 25   # Max statements per function
+max-nested-blocks = 3 # Max nested blocks
+
+[METRICS]
+# Cyclomatic complexity - keep low for critical code
+max-complexity = 10
+
+[FORMAT]
+max-line-length = 100
+
+[BASIC]
+# Good variable names for ATM system
+good-names = i,j,k,ex,_,db,atm,pin,uid,acc,bal,txn
+bad-names = foo,bar,baz,temp,var,data
+
+# ATM-specific naming convention
+variable-rgx = ^[a-z][a-z0-9]*((_[a-z0-9]+)*)?$
+class-rgx = ^[A-Z_][a-zA-Z0-9]*$
+function-rgx = ^[a-z_][a-z0-9_]*$
+
+[SIMILARITIES]
+# Check for code duplication
+min-similarity-lines = 8
+ignore-comments = yes
+ignore-docstrings = yes
