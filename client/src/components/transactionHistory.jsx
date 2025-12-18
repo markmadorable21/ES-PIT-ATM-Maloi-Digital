@@ -1,23 +1,23 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 function TransactionHistory({ onBack, selectedAccount }) {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [debugInfo, setDebugInfo] = useState('');
+  const [debugInfo, setDebugInfo] = useState("");
 
   useEffect(() => {
     const fetchHistory = async () => {
-      console.log('🔄 TransactionHistory useEffect triggered');
-      console.log('📋 selectedAccount prop:', selectedAccount);
+      console.log("🔄 TransactionHistory useEffect triggered");
+      console.log("📋 selectedAccount prop:", selectedAccount);
 
       // 1. SAFETY CHECK: Ensure we have an account to fetch for
       if (!selectedAccount) {
-        const errorMsg = 'No selectedAccount provided to TransactionHistory';
-        console.error('❌', errorMsg);
+        const errorMsg = "No selectedAccount provided to TransactionHistory";
+        console.error("❌", errorMsg);
         setError(errorMsg);
         setLoading(false);
-        setDebugInfo('selectedAccount is null/undefined');
+        setDebugInfo("selectedAccount is null/undefined");
         return;
       }
 
@@ -28,17 +28,17 @@ function TransactionHistory({ onBack, selectedAccount }) {
         const rfid =
           selectedAccount.rfid_tag || selectedAccount.tag || selectedAccount;
 
-        console.log('🔍 RFID extraction attempt:');
-        console.log('- selectedAccount.rfid_tag:', selectedAccount.rfid_tag);
-        console.log('- selectedAccount.tag:', selectedAccount.tag);
-        console.log('- selectedAccount:', selectedAccount);
-        console.log('✅ Final RFID value:', rfid);
+        console.log("🔍 RFID extraction attempt:");
+        console.log("- selectedAccount.rfid_tag:", selectedAccount.rfid_tag);
+        console.log("- selectedAccount.tag:", selectedAccount.tag);
+        console.log("- selectedAccount:", selectedAccount);
+        console.log("✅ Final RFID value:", rfid);
 
         setDebugInfo(`Fetching for RFID: "${rfid}"`);
 
-        if (!rfid || rfid.trim() === '') {
-          const errorMsg = 'RFID tag is empty or invalid';
-          console.error('❌', errorMsg);
+        if (!rfid || rfid.trim() === "") {
+          const errorMsg = "RFID tag is empty or invalid";
+          console.error("❌", errorMsg);
           setError(errorMsg);
           setLoading(false);
           return;
@@ -49,7 +49,7 @@ function TransactionHistory({ onBack, selectedAccount }) {
         // 3. FETCH: Connect to the Python backend
         // NOTE: Check if your backend is running on port 5000 or 8000
         const apiUrl = `http://localhost:8000/transactions/${rfid}`;
-        console.log('📡 API URL:', apiUrl);
+        console.log("📡 API URL:", apiUrl);
 
         setLoading(true);
         setError(null);
@@ -60,25 +60,25 @@ function TransactionHistory({ onBack, selectedAccount }) {
 
         console.log(`⏱️ Request took ${endTime - startTime}ms`);
         console.log(
-          '📥 Response status:',
+          "📥 Response status:",
           response.status,
           response.statusText
         );
-        console.log('📥 Response headers:', response.headers);
+        console.log("📥 Response headers:", response.headers);
 
         if (response.ok) {
           const data = await response.json();
-          console.log('✅ Transactions API response:', data);
-          console.log('📊 Data type:', typeof data);
-          console.log('📊 Is array?', Array.isArray(data));
+          console.log("✅ Transactions API response:", data);
+          console.log("📊 Data type:", typeof data);
+          console.log("📊 Is array?", Array.isArray(data));
 
           if (Array.isArray(data)) {
             console.log(`📈 Number of transactions: ${data.length}`);
 
             if (data.length === 0) {
-              console.log('ℹ️ No transactions found in database');
+              console.log("ℹ️ No transactions found in database");
               setDebugInfo(
-                'API returned empty array (no transactions in database)'
+                "API returned empty array (no transactions in database)"
               );
             }
 
@@ -94,21 +94,21 @@ function TransactionHistory({ onBack, selectedAccount }) {
               return {
                 date: item.timestamp
                   ? new Date(item.timestamp).toLocaleString()
-                  : 'Unknown Date',
-                type: item.type || 'unknown',
+                  : "Unknown Date",
+                type: item.type || "unknown",
                 amount: item.amount || 0,
                 raw: item, // Keep raw data for debugging
               };
             });
 
-            console.log('✨ Formatted data:', formattedData);
+            console.log("✨ Formatted data:", formattedData);
             setTransactions(formattedData);
             setDebugInfo(
               `Loaded ${formattedData.length} transactions successfully`
             );
           } else {
-            const errorMsg = 'API did not return an array';
-            console.error('❌', errorMsg, data);
+            const errorMsg = "API did not return an array";
+            console.error("❌", errorMsg, data);
             setError(errorMsg);
             setTransactions([]);
             setDebugInfo(
@@ -120,7 +120,7 @@ function TransactionHistory({ onBack, selectedAccount }) {
           }
         } else {
           // Try to get error details from response
-          let errorDetail = '';
+          let errorDetail = "";
           try {
             const errorData = await response.json();
             errorDetail = errorData.detail || JSON.stringify(errorData);
@@ -129,7 +129,7 @@ function TransactionHistory({ onBack, selectedAccount }) {
           }
 
           const errorMsg = `Server error: ${response.status} ${response.statusText}`;
-          console.error('❌', errorMsg, errorDetail);
+          console.error("❌", errorMsg, errorDetail);
           setError(errorMsg);
           setTransactions([]);
           setDebugInfo(
@@ -137,9 +137,9 @@ function TransactionHistory({ onBack, selectedAccount }) {
           );
         }
       } catch (error) {
-        console.error('❌ Network/Connection error:', error);
-        console.error('📞 Is the backend server running?');
-        console.error('🔌 Check: http://localhost:8000/');
+        console.error("❌ Network/Connection error:", error);
+        console.error("📞 Is the backend server running?");
+        console.error("🔌 Check: http://localhost:8000/");
 
         const errorMsg = `Connection failed: ${error.message}`;
         setError(errorMsg);
@@ -161,7 +161,7 @@ function TransactionHistory({ onBack, selectedAccount }) {
       <p className="font-mono text-gray-600">{debugInfo}</p>
       <button
         onClick={() => {
-          console.log('🔄 Manual refresh triggered');
+          console.log("🔄 Manual refresh triggered");
           setLoading(true);
           setTransactions([]);
           setError(null);
@@ -270,10 +270,10 @@ function TransactionHistory({ onBack, selectedAccount }) {
                   <td className="px-4 py-2 capitalize font-medium">{t.type}</td>
                   <td
                     className={`px-4 py-2 font-bold ${
-                      t.type === 'withdraw' ? 'text-red-600' : 'text-green-600'
+                      t.type === "withdraw" ? "text-red-600" : "text-green-600"
                     }`}
                   >
-                    {t.type === 'withdraw' ? '-' : '+'}₱
+                    {t.type === "withdraw" ? "-" : "+"}₱
                     {t.amount.toLocaleString()}
                   </td>
                 </tr>
